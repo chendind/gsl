@@ -1,0 +1,144 @@
+body{
+    background-color: #e5e5e5 !important;
+}
+.after{
+    &:after{
+        display: block;
+        content: '';
+        clear: both;
+    }
+}
+.pull-left{
+    float: left;
+}
+.pull-right{
+    float: right;
+}
+.pd10{
+    padding: 10px;
+}
+.text-pull-right{
+    text-align: right;
+}
+.bg-white{
+    background-color: #fff !important;
+}
+.bg-green{
+    background-color: #1abc9c !important;
+}
+
+.color-white{
+    color: #fff !important;
+}
+.color-red{
+    color: #f23030 !important;
+}
+.color-grey{
+    color: #999 !important;
+}
+.color-light-grey{
+    color: #a6a6a6 !important;
+}
+.mh10{
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.mv10{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.size12{
+    font-size: 12px;
+}
+.icon-xs{
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    margin-bottom: 1px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.icon-sm{
+    .icon-xs;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 5px;
+}
+.scrollBox{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.mutilEllipsis(@n){
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: @n;
+  -webkit-box-orient: vertical;
+  white-space: pre-wrap;
+}
+.mutilEllipsis-2{
+  .mutilEllipsis(2);
+}
+// 新闻列表css
+.articleList{
+  .weui-media-box_appmsg{
+    align-items: flex-start !important;
+    padding: 10px 15px;
+    .weui-media-box__hd{
+      margin-right: 0 !important;
+      margin-left: .8em;
+      width: 33.3%;
+      height: 20vw;
+    }
+    .weui-media-box__title{
+      font-size: 14px;
+      font-weight: normal;
+    }
+    .weui-media-box__bottom{
+      position: absolute;
+      bottom: 4px;
+      left: 15px;
+      font-size: 14px;
+      &>span{
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .guoqi{
+        width: 30px;
+        vertical-align: middle;
+      }
+    }
+  }
+  .three-img-box{
+    padding-bottom: 35px;
+    .imgbox{
+      &>img{
+        width: 100%;
+        display: block;
+      }
+    }
+    .weui-media-box__bottom{
+      bottom: 0px;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
