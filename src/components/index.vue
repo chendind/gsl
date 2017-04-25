@@ -18,13 +18,17 @@
           </swiper-item>
         </swiper>
         <grid class="grid" :rows="5">
-          <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.goUrl(theme.url)">
+          <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
         </grid>
         <div class="unreadTipBox">
-          <div class="unreadTip" onclick="goUnreadArticleList()" v-show="unreadNumber>0">
+          <div
+            class="unreadTip"
+            v-show="unreadNumber>0"
+            @click="$root.openMobileWindow('unreadArticle', '最新消息', getUnreadList)"
+          >
             {{unreadNumber}}条信息未查看<i class="fa fa-fw fa-angle-right"></i>
           </div>
         </div>
@@ -124,6 +128,8 @@ export default {
     getNewestMainData(){
       getMainData(1, this.$data.articleThemes).done((data) => {
         this.$data.articles = data.order;
+        this.$refs.scroller.donePulldown();
+        this.$refs.scroller.enablePullup();
       });
     },
     getMoreMainData(){
@@ -135,10 +141,21 @@ export default {
             ...data.order,
           ];
           this.$refs.scroller.donePullup();
+          if (data.order.length < 10) {
+            this.$refs.scroller.disablePullup();
+          }
         } else {
           this.$refs.scroller.disablePullup();
         }
       });
+    },
+    getUnreadList(){
+      const factionId = localStorage.getItem('factionId');
+      getUnreadList(1, factionId).done((data) => {
+        if (data.state == 0) {
+          this.$data.unreadNumber = data.open_count;
+        }
+      })
     },
     allRefresh(){
       const userId = localStorage.getItem('userId');
@@ -148,12 +165,12 @@ export default {
       }
       getFollowState(userId).done((data) => {
         if (data.state == 0) {
+          this.getUnreadList();
           $.when(
             getPortalArticle(factionId),
             getPortalCarousel(factionId),
             getPortalTheme(factionId),
-            getUnreadList(factionId)
-          ).done((data1, data2, data3, data4) => {
+          ).done((data1, data2, data3) => {
             if (data1[0].state == 0) {
               this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
                 return item.id;
@@ -187,9 +204,6 @@ export default {
                   url: item.link || url,
                 }
               });
-            }
-            if (data4[0].state == 0) {
-              this.$data.unreadNumber = data4[0].open_count;
             }
             this.$refs.scroller.donePulldown();
           })

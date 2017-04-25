@@ -54,7 +54,7 @@ export const getPortalTheme = (factionId) => {
     }
   });
 }
-export const getMainData = (page, themes) => {
+export const getMainData = (page = 1, themes) => {
   return $.ajax({
     url:'/home/article/lists',
     data: {
@@ -65,17 +65,17 @@ export const getMainData = (page, themes) => {
     }
   });
 }
-export const getUnreadList = (page = 1, number = 10, factionId = localStorage.getItem("factionId")) => {
+export const getUnreadList = (page = 1, factionId) => {
   return $.ajax({
     url: '/home/article/lists',
     type: 'post',
     data: {
       page: page,
-      number: number,
+      number: 10,
       isopen: 2,
       portal_id: factionId,
     }
-  })
+  });
 }
 
 
