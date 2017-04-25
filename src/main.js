@@ -14,6 +14,15 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   router,
-  render: h => h(App)
+  methods: {
+    goUrl(url){
+      if (location.host === 'portal.xiyoukeji.com') {
+        router.push({path: url})
+      } else {
+
+      }
+    }
+  },
+  render: h => h(App),
 }).$mount('#app-box')
 

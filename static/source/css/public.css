@@ -81,7 +81,41 @@ body {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  white-space: pre-wrap;
+  white-space: normal;
+}
+.articleList .article {
+  margin-bottom: 10px;
+}
+.articleList .weui-media-box__title {
+  font-size: 16px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+.articleList .weui-media-box__bottom {
+  position: absolute;
+  bottom: 4px;
+  left: 15px;
+  font-size: 14px;
+}
+.articleList .weui-media-box__bottom > span {
+  display: inline-block;
+  vertical-align: middle;
+}
+.articleList .weui-media-box__bottom .guoqi {
+  width: 30px;
+  vertical-align: middle;
+}
+.articleList .single-img-box {
+  padding-bottom: 35px;
+  padding-top: 10px;
+}
+.articleList .single-img-box .imgbox > img {
+  display: block;
+  width: 100%;
+  height: 40vw;
+}
+.articleList .single-img-box .weui-media-box__bottom {
+  bottom: 0px;
 }
 .articleList .weui-media-box_appmsg {
   align-items: flex-start !important;
@@ -93,30 +127,13 @@ body {
   width: 33.3%;
   height: 20vw;
 }
-.articleList .weui-media-box_appmsg .weui-media-box__title {
-  font-size: 14px;
-  font-weight: normal;
-}
-.articleList .weui-media-box_appmsg .weui-media-box__bottom {
-  position: absolute;
-  bottom: 4px;
-  left: 15px;
-  font-size: 14px;
-}
-.articleList .weui-media-box_appmsg .weui-media-box__bottom > span {
-  display: inline-block;
-  vertical-align: middle;
-}
-.articleList .weui-media-box_appmsg .weui-media-box__bottom .guoqi {
-  width: 30px;
-  vertical-align: middle;
-}
 .articleList .three-img-box {
   padding-bottom: 35px;
 }
 .articleList .three-img-box .imgbox > img {
   width: 100%;
   display: block;
+  height: 20vw;
 }
 .articleList .three-img-box .weui-media-box__bottom {
   bottom: 0px;

@@ -7,6 +7,9 @@
       :pulldown-config="pulldownConfig"
       :pullup-config="pullupConfig"
       :lock-x="true"
+      ref="scroller"
+      @on-pulldown-loading="onPulldownLoading"
+      @on-pullup-loading="onPullupLoading"
     >
       <div>
         <swiper>
@@ -15,23 +18,23 @@
           </swiper-item>
         </swiper>
         <grid class="grid" :rows="5">
-          <grid-item class="grid-item" v-for="(theme, $index) in themes" :key="$index">
+          <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.goUrl(theme.url)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
         </grid>
         <div class="unreadTipBox">
-          <div class="unreadTip" onclick="goUnreadArticleList()">
-            <span>1</span>条信息未查看<i class="fa fa-fw fa-angle-right"></i>
+          <div class="unreadTip" onclick="goUnreadArticleList()" v-show="unreadNumber>0">
+            {{unreadNumber}}条信息未查看<i class="fa fa-fw fa-angle-right"></i>
           </div>
         </div>
         <div class="articleList">
           <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex">
-            <div class="weui-media-box weui-media-box_appmsg" :class="{'three-img-box': article.function == 1}">
+            <div class="weui-media-box three-img-box" v-if="article.function == 1">
               <div class="weui-media-box__bd">
-                <h4 class="weui-media-box__title" :class="{ 'mutilEllipsis-2': article.function == 3, 'ellipsis': article.function == 1 }">{{article.title}}</h4>
+                <h4 class="weui-media-box__title ellipsis">{{article.title}}</h4>
               </div>
-              <flexbox justify="space-between" align="stretch" v-if="article.function == 1">
+              <flexbox justify="space-between" align="stretch">
                 <flexbox-item class="imgbox" :key="0">
                   <img :src="article.photo">
                 </flexbox-item>
@@ -39,11 +42,31 @@
                   <img :src="article.photo2">
                 </flexbox-item>
                 <flexbox-item class="imgbox" :key="2">
-                  <img :src="article.photo3">
+                  <img :src="article.photo2">
                 </flexbox-item>
               </flexbox>
-              <div v-if="article.function == 2 || article.function == 4">
-                <img :src="article.photo">
+              <div class="weui-media-box__bottom color-light-grey">
+                <span>通知</span>
+                <span class="mh10">04-20</span>
+                <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              </div>
+            </div>
+            <div class="weui-media-box single-img-box" v-if="article.function == 2">
+              <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
+              </div>
+              <div class="imgbox">
+                <img :src="article.photo_photo">
+              </div>
+              <div class="weui-media-box__bottom color-light-grey">
+                <span>{{article.theme}}</span>
+                <span class="mh10">04-20</span>
+                <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              </div>
+            </div>
+            <div class="weui-media-box weui-media-box_appmsg" v-if="article.function == 3">
+              <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
               </div>
               <div class="weui-media-box__hd" v-if="article.function == 3">
                 <img :src="article.photo" class="weui-media-box__thumb">
@@ -51,20 +74,32 @@
               <div class="weui-media-box__bottom color-light-grey">
                 <span>{{article.theme}}</span>
                 <span class="mh10">04-20</span>
-                <img class="guoqi mv10" :src="require('@/assets/image/guoqi.png')" alt="">
+                <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
               </div>
             </div>
-            <!-- <div class="weui-media-box weui-media-box_appmsg three-img-box">
+            <div class="weui-media-box single-img-box" v-if="article.function == 4">
               <div class="weui-media-box__bd">
-                <h4 class="weui-media-box__title ">{{article.title}}</h4>
+                <h4 class="weui-media-box__title mutilEllipsis-2"><i class="fa fa-fw fa-video-camera"></i>{{article.title}}</h4>
               </div>
-
+              <div class="imgbox">
+                <img :src="article.photo">
+              </div>
               <div class="weui-media-box__bottom color-light-grey">
-                <span>通知</span>
+                <span>{{article.theme}}</span>
                 <span class="mh10">04-20</span>
-                <img class="guoqi mv10" :src="require('@/assets/image/guoqi.png')" alt="">
+                <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
               </div>
-            </div> -->
+            </div>
+            <div class="weui-media-box single-img-box" v-if="article.function == 5">
+              <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
+              </div>
+              <div class="weui-media-box__bottom color-light-grey">
+                <span>{{article.theme}}</span>
+                <span class="mh10">04-20</span>
+                <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -74,7 +109,7 @@
 
 <script>
 import { Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem } from 'vux'
-import { getFollowState, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getNewestMainData } from '@/assets/js/ajax.js'
+import { getFollowState, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getMainData, getUnreadList } from '@/assets/js/ajax.js'
 import router from '@/router'
 import $ from 'jquery'
 export default {
@@ -86,18 +121,95 @@ export default {
     apply(){
       console.log('立即申请');
     },
-    getNewestMainData(themes){
-      getNewestMainData(themes).done((data) => {
-        this.articles = data.order;
+    getNewestMainData(){
+      getMainData(1, this.$data.articleThemes).done((data) => {
+        this.$data.articles = data.order;
       });
+    },
+    getMoreMainData(){
+      const page = Math.floor(this.$data.articles.length / 10) + 1;
+      getMainData(page, this.$data.articleThemes).done((data) => {
+        if (data.order.length > 0) {
+          this.$data.articles = [
+            ...this.$data.articles,
+            ...data.order,
+          ];
+          this.$refs.scroller.donePullup();
+        } else {
+          this.$refs.scroller.disablePullup();
+        }
+      });
+    },
+    allRefresh(){
+      const userId = localStorage.getItem('userId');
+      const factionId = localStorage.getItem('factionId');
+      if (!userId) {
+        router.replace('login');
+      }
+      getFollowState(userId).done((data) => {
+        if (data.state == 0) {
+          $.when(
+            getPortalArticle(factionId),
+            getPortalCarousel(factionId),
+            getPortalTheme(factionId),
+            getUnreadList(factionId)
+          ).done((data1, data2, data3, data4) => {
+            if (data1[0].state == 0) {
+              this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
+                return item.id;
+              });
+              localStorage.setItem('articleThemes', this.$data.articleThemes);
+              this.getNewestMainData();
+            }
+            if (data2[0].state == 0) {
+              this.$data.carousels = data2[0].order.carousel;
+            }
+            if (data3[0].state == 0) {
+              const urls = [
+                'business'
+              ];
+              this.$data.themes = data3[0].order.theme.map((item, index) => {
+                let url;
+                switch(item.id - 0){
+                  case 151: url = 'teamwork'; break;
+                  case 146:
+                  case 147:
+                  case 149: url = 'educationTraining'; break;
+                  case 178: url = 'mailBoxList'; break;
+                  case 143: url = 'business'; break;
+                  case 144:
+                  case 148:
+                  case 177: url = 'ecoTrade'; break;
+                  default: url = `themeList?id=${item.id}`;
+                }
+                return {
+                  ...item,
+                  url: item.link || url,
+                }
+              });
+            }
+            if (data4[0].state == 0) {
+              this.$data.unreadNumber = data4[0].open_count;
+            }
+            this.$refs.scroller.donePulldown();
+          })
+        }
+      });
+    },
+    onPulldownLoading(){
+      console.log('onPulldownLoading');
+      this.allRefresh();
+    },
+    onPullupLoading(){
+      console.log('onPullupLoading');
+      this.getMoreMainData(this.$data.page);
     }
-
   },
   data () {
     return {
       carousels: [],
       themes: [],
-      article_theme: [],
+      articleThemes: [],
       pulldownConfig: {
         content: 'Pull Down To Refresh',
         height: 60,
@@ -118,37 +230,14 @@ export default {
         clsPrefix: 'xs-plugin-pullup-'
       },
       articles: [],
+      unreadNumber: 0,
     }
   },
   mounted() {
-    const userId = localStorage.getItem('userId');
-    const factionId = localStorage.getItem('factionId');
-    if (!userId) {
-      router.replace('login');
-    }
-    getFollowState(userId).done((data) => {
-      if (data.state == 0) {
-        $.when(
-          getPortalArticle(factionId),
-          getPortalCarousel(factionId),
-          getPortalTheme(factionId)
-        ).done((data1, data2, data3) => {
-          if (data1[0].state == 0) {
-            const articleTheme = data1[0].order.article_theme.map((item) => {
-              return item.id;
-            });
-            localStorage.setItem('articleTheme', articleTheme);
-            this.getNewestMainData(articleTheme);
-          }
-          if (data2[0].state == 0) {
-            this.$data.carousels = data2[0].order.carousel;
-          }
-          if (data3[0].state == 0) {
-            this.$data.themes = data3[0].order.theme;
-          }
-        })
-      }
-    });
+    this.allRefresh();
+  },
+  updated() {
+    this.$refs.scroller.reset();
   }
 }
 </script>
@@ -198,7 +287,7 @@ export default {
 
 </style>
 <style lang='less'>
-.grid-item{
+.grid-item1{
   .weui-grid__icon{
     width: 9.5vw;
     height: 9.5vw;

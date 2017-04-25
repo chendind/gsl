@@ -54,18 +54,29 @@ export const getPortalTheme = (factionId) => {
     }
   });
 }
-export const getNewestMainData = (themes) => {
+export const getMainData = (page, themes) => {
   return $.ajax({
     url:'/home/article/lists',
     data: {
       theme_id: themes || [],
-      page: 1,
+      page,
       number: 10,
       isthemeclick: 1,
     }
   });
 }
-
+export const getUnreadList = (page = 1, number = 10, factionId = localStorage.getItem("factionId")) => {
+  return $.ajax({
+    url: '/home/article/lists',
+    type: 'post',
+    data: {
+      page: page,
+      number: number,
+      isopen: 2,
+      portal_id: factionId,
+    }
+  })
+}
 
 
 
