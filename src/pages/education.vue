@@ -2,10 +2,10 @@
 <template>
   <div>
     <x-img class="top-pic" :src="test"></x-img>
-    <grid class="grid" :rows="5">
+    <grid class="grid theme-bar" :rows="5">
       <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
-        <img slot="icon" class="grid-item-icon" :src="theme.logo">
-        <span slot="label" class="grid-item-label">{{theme.theme}}</span>
+        <img slot="icon" class="grid-item-icon" :src="theme.photo">
+        <span slot="label" class="grid-item-label">{{theme.name}}</span>
       </grid-item>
     </grid>
     <scroller
@@ -19,94 +19,77 @@
       @on-pulldown-loading="onPulldownLoading"
       @on-pullup-loading="onPullupLoading"
     >
-      <div class="articleList">
-        <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex">
-          <div class="weui-media-box three-img-box" v-if="article.function == 1">
-            <div class="weui-media-box__bd">
-              <h4 class="weui-media-box__title ellipsis">{{article.title}}</h4>
-            </div>
-            <flexbox justify="space-between" align="stretch">
-              <flexbox-item class="imgbox" :key="0">
-                <img :src="article.photo">
-              </flexbox-item>
-              <flexbox-item class="imgbox" :key="1">
-                <img :src="article.photo2">
-              </flexbox-item>
-              <flexbox-item class="imgbox" :key="2">
-                <img :src="article.photo2">
-              </flexbox-item>
-            </flexbox>
-            <div class="weui-media-box__bottom color-light-grey">
-              <span>通知</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
-            </div>
-          </div>
-          <div class="weui-media-box single-img-box" v-if="article.function == 2">
-            <div class="weui-media-box__bd">
-              <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
-            </div>
-            <div class="imgbox">
-              <img :src="article.photo_photo">
-            </div>
-            <div class="weui-media-box__bottom color-light-grey">
-              <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
-            </div>
-          </div>
-          <div class="weui-media-box weui-media-box_appmsg" v-if="article.function == 3">
-            <div class="weui-media-box__bd">
-              <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
-            </div>
-            <div class="weui-media-box__hd" v-if="article.function == 3">
-              <img :src="article.photo" class="weui-media-box__thumb">
-            </div>
-            <div class="weui-media-box__bottom color-light-grey">
-              <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
-            </div>
-          </div>
-          <div class="weui-media-box single-img-box" v-if="article.function == 4">
-            <div class="weui-media-box__bd">
-              <h4 class="weui-media-box__title mutilEllipsis-2"><i class="fa fa-fw fa-video-camera"></i>{{article.title}}</h4>
-            </div>
-            <div class="imgbox">
-              <img :src="article.photo">
-            </div>
-            <div class="weui-media-box__bottom color-light-grey">
-              <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
-            </div>
-          </div>
-          <div class="weui-media-box single-img-box" v-if="article.function == 5">
-            <div class="weui-media-box__bd">
-              <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
-            </div>
-            <div class="weui-media-box__bottom color-light-grey">
-              <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
-            </div>
-          </div>
-        </div>
-      </div>
+      <article-list :articles="articles">
+      </article-list>
     </scroller>
   </div>
 </template>
 <script>
 import { Scroller, Flexbox, FlexboxItem, XImg, Grid, GridItem} from 'vux'
+import ArticleList from '../components/articleList.vue'
 import { getUnreadList } from '@/assets/js/ajax.js'
 export default {
-  name: 'unreadArticle',
+  name: 'education',
   components: {
-    Scroller, Flexbox, FlexboxItem, XImg, Grid, GridItem
+    Scroller, Flexbox, FlexboxItem, XImg, Grid, GridItem,
+    ArticleList
   },
   data() {
     return {
-      articles: [],
+      themes:[
+        {
+            "name": "党建教育", 
+            "id": 50, 
+            "photo": "/icon_dangjian_default@2x.png"
+        }, 
+        {
+            "name": "政策法规", 
+            "id": 51, 
+            "photo": "/icon_zhengce_default@2x.png"
+        }, 
+        {
+            "name": "企业管理", 
+            "id": 52, 
+            "photo": "/icon_qiye_default@2x.png"
+        }, 
+        {
+            "name": "音视频", 
+            "id": 417, 
+            "photo": "/icon_yinshipin_default@2x.png"
+        }, 
+        {
+            "name": "文档", 
+            "id": 551, 
+            "photo": "/icon_wendang_default@2x.png"
+        }
+    ],
+      articles: [{
+            "id": 778, 
+            "title": "爱在党旗下 永远跟党走——戎威远安全服务集团党建工作侧记", 
+            "author": "杭州市工商联", 
+            "photo": "/Uploads/20170309/_58c12be22d216.jpeg", 
+            "photo2": null, 
+            "photo3": null, 
+            "photo_photo": null, 
+            "function": 3, 
+            "link": "", 
+            "in_time": 1489054690, 
+            "end_time": 1489542859, 
+            "isend": 1, 
+            "theme": "教育培训", 
+            "comment_count": 0, 
+            "like_count": 0, 
+            "read_count": 13, 
+            "measure_count": 0, 
+            "value": [
+                {
+                    "tag": "企业管理", 
+                    "tag_id": 52
+                }
+            ], 
+            "isread": 1, 
+            "isnew": 0
+        }],
       pulldownConfig: {
         content: 'Pull Down To Refresh',
         height: 60,
@@ -160,7 +143,7 @@ export default {
     }
   },
   mounted() {
-    this.onPulldownLoading()
+    // this.onPulldownLoading()
   },
   updated() {
     this.$refs.scroller.reset();
@@ -173,4 +156,67 @@ export default {
     width: 100%;
     height:50vw;
   }
+
+  .theme-bar{
+    margin-bottom:13px;
+  }
+</style>
+
+
+<style lang='less' scoped>
+.carouselBox{
+  &>img{
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+.grid{
+  padding: 10px 0 5px;
+  background-color: #fff;
+}
+.grid-item{
+  padding: 2px 10px !important;
+  &:before{
+    display: none;
+  }
+  &:after{
+    display: none;
+  }
+}
+.grid-item-icon{
+
+}
+.grid-item-label{
+  font-size: 12px;
+}
+.unreadTipBox {
+  margin: 10px 0;
+  text-align: center;
+}
+.unreadTip {
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 12px;
+  border-radius: 14px;
+  background-color: #cecfd0;
+  color: #fff;
+  line-height: 1;
+}
+
+
+</style>
+<style lang='less'>
+.grid-item1{
+  .weui-grid__icon{
+    width: 9.5vw;
+    height: 9.5vw;
+  }
+  .weui-grid__label{
+    margin-top: 0!important;
+  }
+}
+.xs-container{
+  min-height: 100vh;
+}
 </style>
