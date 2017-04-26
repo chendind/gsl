@@ -77,6 +77,17 @@ export const getUnreadList = (page = 1, factionId) => {
     }
   });
 }
+export const getThemeTag = (themeId) => {
+  return $.ajax({
+    url:'/home/theme/ThemeTag',
+    data: {
+      id: themeId
+    }
+  });
+}
+
+      
+
 
 
 
