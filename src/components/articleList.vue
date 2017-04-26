@@ -1,6 +1,6 @@
 <template>
   <div class="articleList">
-    <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex">
+    <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex" @click="$root.openMobileWindow('article')">
       <div class="weui-media-box three-img-box" v-if="article.function == 1">
         <div class="weui-media-box__bd">
           <h4 class="weui-media-box__title ellipsis">{{article.title}}</h4>
@@ -19,7 +19,7 @@
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
           <span class="mh10">{{article.in_time | time}}</span>
-          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
+          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="showDateoutLabel && article.end_time*1000 < (new Date() - 0)">
         </div>
       </div>
       <div class="weui-media-box single-img-box" v-if="article.function == 2">
@@ -32,7 +32,7 @@
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
           <span class="mh10">{{article.in_time | time}}</span>
-          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
+          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="showDateoutLabel && article.end_time*1000 < (new Date() - 0)">
         </div>
       </div>
       <div class="weui-media-box weui-media-box_appmsg" v-if="article.function == 3">
@@ -45,7 +45,7 @@
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
           <span class="mh10">{{article.in_time | time}}</span>
-          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
+          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="showDateoutLabel && article.end_time*1000 < (new Date() - 0)">
         </div>
       </div>
       <div class="weui-media-box single-img-box" v-if="article.function == 4">
@@ -58,7 +58,7 @@
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
           <span class="mh10">{{article.in_time | time}}</span>
-          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
+          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="showDateoutLabel && article.end_time*1000 < (new Date() - 0)">
         </div>
       </div>
       <div class="weui-media-box single-img-box" v-if="article.function == 5">
@@ -68,7 +68,7 @@
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
           <span class="mh10">{{article.in_time | time}}</span>
-          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
+          <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="showDateoutLabel && article.end_time*1000 < (new Date() - 0)">
         </div>
       </div>
     </div>
@@ -85,6 +85,11 @@ export default {
     articles: {
       type: Array,
       default: [],
+      required: false,
+    },
+    showDateoutLabel: {
+      type: Boolean,
+      defalut: true,
       required: false,
     }
   }

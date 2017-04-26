@@ -16,10 +16,20 @@ new Vue({
   router,
   methods: {
     openMobileWindow(url, name, callback){
+      const url2name = {
+        unreadArticle: '最新消息',
+        article: '新闻详情',
+        education: '教育培训',
+        policy: '政策解读',
+        questionaire: '问卷调查',
+        summary: '市联概况',
+        trade: '招商经贸',
+
+      }
       if (location.host === 'portal.xiyoukeji.com') {
         router.push({path: url})
       } else {
-        Bridge.openMobileWindow(`index.html#/${url}`, name, (result) => {
+        Bridge.openMobileWindow(`index.html#/${url}`, name || url2name[url] || "", (result) => {
           callback&&callback(result);
         });
       }
