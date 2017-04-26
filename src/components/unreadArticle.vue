@@ -30,9 +30,9 @@
               </flexbox-item>
             </flexbox>
             <div class="weui-media-box__bottom color-light-grey">
-              <span>通知</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              <span>{{article.theme}}</span>
+              <span class="mh10">{{article.in_time | time}}</span>
+              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
             </div>
           </div>
           <div class="weui-media-box single-img-box" v-if="article.function == 2">
@@ -44,8 +44,8 @@
             </div>
             <div class="weui-media-box__bottom color-light-grey">
               <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              <span class="mh10">{{article.in_time | time}}</span>
+              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
             </div>
           </div>
           <div class="weui-media-box weui-media-box_appmsg" v-if="article.function == 3">
@@ -57,8 +57,8 @@
             </div>
             <div class="weui-media-box__bottom color-light-grey">
               <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              <span class="mh10">{{article.in_time | time}}</span>
+              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
             </div>
           </div>
           <div class="weui-media-box single-img-box" v-if="article.function == 4">
@@ -70,8 +70,8 @@
             </div>
             <div class="weui-media-box__bottom color-light-grey">
               <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              <span class="mh10">{{article.in_time | time}}</span>
+              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
             </div>
           </div>
           <div class="weui-media-box single-img-box" v-if="article.function == 5">
@@ -80,8 +80,8 @@
             </div>
             <div class="weui-media-box__bottom color-light-grey">
               <span>{{article.theme}}</span>
-              <span class="mh10">04-20</span>
-              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" alt="">
+              <span class="mh10">{{article.in_time | time}}</span>
+              <img class="guoqi mv10" :src="require('@/assets/image/dateout.png')" v-show="article.end_time*1000 < (new Date() - 0)">
             </div>
           </div>
         </div>
