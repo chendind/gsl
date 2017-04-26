@@ -182,21 +182,18 @@ export default {
               this.$data.carousels = data2[0].order.carousel;
             }
             if (data3[0].state == 0) {
-              const urls = [
-                'business'
-              ];
               this.$data.themes = data3[0].order.theme.map((item, index) => {
                 let url;
                 switch(item.id - 0){
                   case 151: url = 'teamwork'; break;
-                  case 146:
-                  case 147:
+                  case 146: url = 'policy'; break; // 政策解读
+                  case 147: url = 'education'; break; // 教育培训
                   case 149: url = 'educationTraining'; break;
                   case 178: url = 'mailBoxList'; break;
-                  case 143: url = 'business'; break;
+                  case 143: url = 'summary'; break; // 市联概况
                   case 144:
-                  case 148:
-                  case 177: url = 'ecoTrade'; break;
+                  case 148: url = 'questionaire'; break; // 问卷调查
+                  case 177: url = 'announce'; break; // 通知公告
                   default: url = `themeList?id=${item.id}`;
                 }
                 return {
