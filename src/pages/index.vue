@@ -18,7 +18,7 @@
           </swiper-item>
         </swiper>
         <grid class="grid bg-white no-before no-after" :rows="5">
-          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
+          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);$root.openMobileWindow(theme.url, theme.theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
@@ -142,6 +142,9 @@ export default {
     onPullupLoading(){
       console.log('onPullupLoading');
       this.getMoreMainData(this.$data.page);
+    },
+    setItem(a,b){
+      localStorage.setItem(a,b);
     }
   },
   data () {
