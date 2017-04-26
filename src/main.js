@@ -11,6 +11,15 @@ FastClick.attach(document.body)
 
 Vue.config.productionTip = false
 
+Vue.filter('time', (value) => {
+  const date = getFormatTime(value);
+  return `${date.m}-${date.d}`;
+});
+Vue.filter('time1', (value) => {
+  const date = getFormatTime(value);
+  return `${date.y}年${date.m}月${date.d}日`;
+});
+
 /* eslint-disable no-new */
 new Vue({
   router,
@@ -33,17 +42,37 @@ new Vue({
           callback&&callback(result);
         });
       }
-    }
+    },
+    // 把对象转换成字符串，并进行URI编码，用于url中的查询参数拼接
+    encodeObj(obj){
+      return encodeURIComponent(JSON.stringify(obj));
+    },
+    // 获取url中的search，提取数据
+    getQueryData(){
+      var searchUrl = window.location.hash.split("?")[1];
+      var URI = decodeURIComponent(searchUrl);
+      var parseURI = URI;
+      if(URI){
+          try{
+              parseURI = JSON.parse(URI);
+          }
+          catch(e){
+              parseURI = "";
+          }
+      }
+      return parseURI;
+    },
   },
   render: h => h(App),
 }).$mount('#app-box')
 
-Vue.filter('time', (value) => {
-  const date = new Date(value);
-  let Y = date.getFullYear();
+
+function getFormatTime(value) {
+  const date = new Date(value*1000);
+  let y = date.getFullYear();
   let m = date.getMonth() + 1;
   let d = date.getDate();
-  let H = date.getHours();
+  let h = date.getHours();
   let i = date.getMinutes();
   let s = date.getSeconds();
   if (m < 10) {
@@ -52,8 +81,8 @@ Vue.filter('time', (value) => {
   if (d < 10) {
     d = '0' + d;
   }
-  if (H < 10) {
-    H = '0' + H;
+  if (h < 10) {
+    h = '0' + h;
   }
   if (i < 10) {
     i = '0' + i;
@@ -61,5 +90,7 @@ Vue.filter('time', (value) => {
   if (s < 10) {
     s = '0' + s;
   }
-  return `${m}-${d}`;
-});
+  return {
+    y, m, d, h, i, s
+  };
+}

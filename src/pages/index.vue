@@ -17,8 +17,8 @@
             <img :src="carousel.photo">
           </swiper-item>
         </swiper>
-        <grid class="grid" :rows="5">
-          <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
+        <grid class="grid bg-white no-before no-after" :rows="5">
+          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
@@ -191,16 +191,9 @@ export default {
 }
 .grid{
   padding: 10px 0 5px;
-  background-color: #fff;
 }
 .grid-item{
   padding: 2px 10px !important;
-  &:before{
-    display: none;
-  }
-  &:after{
-    display: none;
-  }
 }
 .grid-item-icon{
 

@@ -77,8 +77,24 @@ export const getUnreadList = (page = 1, factionId) => {
     }
   });
 }
-
-
+export const getArticle = (id) => {
+  return $.ajax({
+    url: '/home/index/show',
+    type: 'post',
+    data: {
+      id
+    }
+  });
+}
+export const toggleDianzan = (id, key) => {
+  return $.ajax({
+    url: '/home/article/ArticleLike',
+    type: 'post',
+    data: {
+      id, key
+    }
+  });
+}
 
 
 

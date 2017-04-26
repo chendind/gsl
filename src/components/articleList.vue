@@ -1,6 +1,6 @@
 <template>
   <div class="articleList">
-    <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex" @click="$root.openMobileWindow('article')">
+    <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex" @click="goArticle(article.id)">
       <div class="weui-media-box three-img-box" v-if="article.function == 1">
         <div class="weui-media-box__bd">
           <h4 class="weui-media-box__title ellipsis">{{article.title}}</h4>
@@ -91,6 +91,15 @@ export default {
       type: Boolean,
       defalut: true,
       required: false,
+    }
+  },
+  methods: {
+    goArticle(id){
+      debugger;
+      const url = this.$root.encodeObj({
+        id
+      });
+      this.$root.openMobileWindow(`article?${url}`);
     }
   }
 }
