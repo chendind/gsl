@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/components/index'
-import login from '@/components/login'
-import summary from '@/components/summary'
-import unreadArticle from '@/components/unreadArticle'
-import announce from '@/components/announce'
-import policy from '@/components/policy'
-import education from '@/components/education'
-import questionaire from '@/components/questionaire'
-import trade from '@/components/trade'
+import index from '@/pages/index'
+import login from '@/pages/login'
+import summary from '@/pages/summary'
+import unreadArticle from '@/pages/unreadArticle'
+import announce from '@/pages/announce'
+import policy from '@/pages/policy'
+import education from '@/pages/education'
+import questionaire from '@/pages/questionaire'
+import trade from '@/pages/trade'
 Vue.use(Router)
 
 export default new Router({

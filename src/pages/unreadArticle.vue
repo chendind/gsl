@@ -12,7 +12,8 @@
       @on-pulldown-loading="onPulldownLoading"
       @on-pullup-loading="onPullupLoading"
     >
-      <div class="articleList">
+      <article-list :articles="articles"></article-list>
+      <!-- <div class="articleList">
         <div class="weui-panel__bd article bg-white" v-for="(article, $articleIndex) in articles" :key="$articleIndex">
           <div class="weui-media-box three-img-box" v-if="article.function == 1">
             <div class="weui-media-box__bd">
@@ -85,17 +86,18 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </scroller>
   </div>
 </template>
 <script>
 import { Scroller, Flexbox, FlexboxItem } from 'vux'
+import articleList from '@/components/articleList.vue'
 import { getUnreadList } from '@/assets/js/ajax.js'
 export default {
   name: 'unreadArticle',
   components: {
-    Scroller, Flexbox, FlexboxItem
+    Scroller, Flexbox, FlexboxItem, articleList
   },
   data() {
     return {
