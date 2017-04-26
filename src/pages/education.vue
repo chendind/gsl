@@ -1,13 +1,6 @@
 <!-- 教育培训 -->
 <template>
   <div>
-    <x-img class="top-pic" :src="test"></x-img>
-    <grid class="grid theme-bar" :rows="5">
-      <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
-        <img slot="icon" class="grid-item-icon" :src="theme.photo">
-        <span slot="label" class="grid-item-label">{{theme.name}}</span>
-      </grid-item>
-    </grid>
     <scroller
       :use-pullup="true"
       :use-pulldown="true"
@@ -18,7 +11,14 @@
       ref="scroller"
       @on-pulldown-loading="onPulldownLoading"
       @on-pullup-loading="onPullupLoading"
-    >
+    > 
+      <x-img class="top-pic" :src="test"></x-img>
+      <grid class="grid theme-bar" :rows="5">
+        <grid-item class="grid-item grid-item1" v-for="(theme, $index) in themes" :key="$index" @on-item-click="$root.openMobileWindow(theme.url, theme.theme)">
+          <img slot="icon" class="grid-item-icon" :src="theme.photo">
+          <span slot="label" class="grid-item-label">{{theme.name}}</span>
+        </grid-item>
+      </grid>
       <article-list :articles="articles">
       </article-list>
     </scroller>
