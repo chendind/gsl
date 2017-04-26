@@ -24,7 +24,8 @@
         <span slot="label" class="grid-item-label size12 color-light-grey">点赞 {{like_count}}</span>
       </grid-item>
       <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleShoucang()">
-        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_grey.png')">
+        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_grey.png')" v-show="!ismeasure">
+        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_blue.png')" v-show="ismeasure">
         <span slot="label" class="grid-item-label size12 color-light-grey">收藏 {{measure_count}}</span>
       </grid-item>
     </grid>
@@ -49,13 +50,19 @@ export default {
       });
     },
     toggleShoucang(){
-      // toggleShoucang
+      toggleShoucang(this.$data.article_id).done((data) => {
+        if(data.state == 0) {
+          this.$data.measure_count = data.order;
+          this.$data.ismeasure = 1 - this.$data.ismeasure;
+        }
+      })
     }
   },
   data() {
     return {
       article_id: 0,
       article_like: 0,
+      ismeasure: 0,
       like_count: 0,
       author: '',
       in_time: 0,

@@ -96,7 +96,6 @@ export default {
   },
   methods: {
     goArticle(id){
-      debugger;
       const url = this.$root.encodeObj({
         id
       });

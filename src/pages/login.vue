@@ -29,6 +29,8 @@ export default {
           } else {
             router.replace({path: 'index'});
           }
+        } else {
+          router.replace({path: 'public'})
         }
       });
     });

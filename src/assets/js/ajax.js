@@ -25,6 +25,13 @@ export const getFollowState = (user_id) => {
     },
   });
 }
+export const getPublicPortal = () => {
+  return $.ajax({
+    url: "/home/show/PublicPortal",
+    data: {
+    },
+  });
+}
 export const getPortalLists = () => {
   return $.ajax({
     url:'/home/show/PortalLists'
@@ -92,6 +99,15 @@ export const toggleDianzan = (id, key) => {
     type: 'post',
     data: {
       id, key
+    }
+  });
+}
+export const toggleShoucang = (id) => {
+  return $.ajax({
+    url: '/home/question/measure',
+    type: 'post',
+    data: {
+      id
     }
   });
 }
