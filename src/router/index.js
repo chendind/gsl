@@ -10,6 +10,7 @@ import education from '@/pages/education'
 import questionaire from '@/pages/questionaire'
 import trade from '@/pages/trade'
 import article from '@/pages/article'
+import tagArticle from '@/pages/tagArticle' 
 Vue.use(Router)
 
 export default new Router({
@@ -67,6 +68,11 @@ export default new Router({
       path: '/article',
       name: 'article',
       component: article
+    },
+    {
+      path: '/tagArticle',
+      name: 'tagArticle',
+      component: tagArticle
     },
   ]
 })

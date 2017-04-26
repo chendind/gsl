@@ -33,6 +33,7 @@ new Vue({
         questionaire: '问卷调查',
         summary: '市联概况',
         trade: '招商经贸',
+        hehe:'hehe'
 
       }
       if (location.host === 'portal.xiyoukeji.com') {

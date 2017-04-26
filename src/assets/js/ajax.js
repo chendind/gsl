@@ -95,6 +95,14 @@ export const toggleDianzan = (id, key) => {
     }
   });
 }
+export const getThemeTag = (themeId) => {
+  return $.ajax({
+    url:'/home/theme/ThemeTag',
+    data: {
+      id: themeId
+    }
+  });
+}
 
 
 

@@ -1,4 +1,4 @@
-<!-- 教育培训 -->
+<!-- 标签文章 -->
 <template>
   <div>
     <scroller
@@ -11,35 +11,22 @@
       ref="scroller"
       @on-pulldown-loading="onPulldownLoading"
       @on-pullup-loading="onPullupLoading"
-    > 
-      <div>
-        <x-img class="top-pic" :src="topPic"></x-img>
-        <grid class="grid theme-bar" :rows="5">
-          <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle');">
-            <img slot="icon" class="grid-item-icon" :src="themeTag.photo">
-            <span slot="label" class="grid-item-label">{{themeTag.name}}</span>
-          </grid-item>
-        </grid>
-        <article-list :articles="articles">
-        </article-list>
-      </div>
+    >
+      <article-list :articles="articles"></article-list>
     </scroller>
   </div>
 </template>
 <script>
-import { Scroller, XImg, Grid, GridItem} from 'vux'
+import { Scroller, Flexbox, FlexboxItem } from 'vux'
 import articleList from '@/components/articleList.vue'
-import $ from 'jquery'
-import { getUnreadList, getMainData, getThemeTag } from '@/assets/js/ajax.js'
+import { getUnreadList } from '@/assets/js/ajax.js'
 export default {
-  name: 'education',
+  name: 'tagArticle',
   components: {
-    Scroller, XImg, Grid, GridItem,
-    articleList
+    Scroller, Flexbox, FlexboxItem, articleList
   },
   data() {
     return {
-      themeTags:[],
       articles: [],
       pulldownConfig: {
         content: 'Pull Down To Refresh',
@@ -60,18 +47,12 @@ export default {
         loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
         clsPrefix: 'xs-plugin-pullup-'
       },
-      topPic:'http://portal.xiyoukeji.com/webTest/source/img/top_new.png'
     }
   },
   methods: {
     onPulldownLoading(){
-      const themeId = localStorage.getItem('themeId');
-      getThemeTag(themeId).done((data) => {
-        if (data.state == 0) {
-          this.$data.themeTags = data.order;
-        }
-      });
-      getMainData(1, themeId).done((data) => {
+      const factionId = localStorage.getItem('factionId');
+      getUnreadList(1, factionId).done((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
           this.$refs.scroller.donePulldown();
@@ -96,13 +77,10 @@ export default {
           this.$refs.scroller.disablePullup();
         }
       })
-    },
-    setItem(a,b){
-      localStorage.setItem(a,b);
     }
   },
   mounted() {
-    this.onPulldownLoading();
+    this.onPulldownLoading()
   },
   updated() {
     this.$refs.scroller.reset();
@@ -110,61 +88,5 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-/*original*/
-.grid{
-  padding: 10px 0 5px;
-  background-color: #fff;
-}
-.grid-item{
-  padding: 2px 10px !important;
-  &:before{
-    display: none;
-  }
-  &:after{
-    display: none;
-  }
-}
-.grid-item-icon{
 
-}
-.grid-item-label{
-  font-size: 12px;
-}
-.unreadTipBox {
-  margin: 10px 0;
-  text-align: center;
-}
-.unreadTip {
-  display: inline-block;
-  padding: 8px 20px;
-  font-size: 12px;
-  border-radius: 14px;
-  background-color: #cecfd0;
-  color: #fff;
-  line-height: 1;
-}
-
-.grid-item1{
-  .weui-grid__icon{
-    width: 9.5vw;
-    height: 9.5vw;
-  }
-  .weui-grid__label{
-    margin-top: 0!important;
-  }
-}
-.xs-container{
-  min-height: 100vh;
-}
-
-/*added by heinz on 04/26/17*/
-.top-pic{
-  display: block;
-  width: 100%;
-  height:50vw;
-}
-
-.theme-bar{
-  margin-bottom:13px;
-}
 </style>
