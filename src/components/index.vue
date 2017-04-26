@@ -191,9 +191,9 @@ export default {
                   case 149: url = 'educationTraining'; break;
                   case 178: url = 'mailBoxList'; break;
                   case 143: url = 'summary'; break; // 市联概况
-                  case 144:
+                  case 144: url = 'announce'; break; // 通知公告
                   case 148: url = 'questionaire'; break; // 问卷调查
-                  case 177: url = 'announce'; break; // 通知公告
+                  case 177: url = 'trade'; break; // 招商经贸
                   default: url = `themeList?id=${item.id}`;
                 }
                 return {

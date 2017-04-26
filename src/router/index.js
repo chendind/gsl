@@ -8,7 +8,7 @@ import announce from '@/components/announce'
 import policy from '@/components/policy'
 import education from '@/components/education'
 import questionaire from '@/components/questionaire'
-
+import trade from '@/components/trade'
 Vue.use(Router)
 
 export default new Router({
@@ -56,6 +56,11 @@ export default new Router({
       path: '/questionaire',
       name: 'questionaire',
       component: questionaire
+    },
+    {
+      path: '/trade',
+      name: 'trade',
+      component: trade
     },
   ]
 })
