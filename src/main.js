@@ -47,12 +47,14 @@ new Vue({
         trade: '招商经贸',
         public: '游客页面',
       }
-      if (location.host === 'portal.xiyoukeji.com') {
-        router.push({path: url})
-      } else {
-        Bridge.openMobileWindow(`index.html#/${url}`, name || url2name[url] || "", (result) => {
+      if (location.pathname.indexOf('Index')>=0) {
+        // console.log(`index.html#/${url}`, name || url2name[url] || "")
+
+        Bridge.openMobileWindow(`${location.origin+location.pathname}#/${url}`, name || url2name[url] || "", (result) => {
           callback&&callback(result);
         });
+      } else {
+        router.push({path: url})
       }
     },
     // 把对象转换成字符串，并进行URI编码，用于url中的查询参数拼接
@@ -62,6 +64,9 @@ new Vue({
     // 获取url中的search，提取数据
     getQueryData(){
       var searchUrl = window.location.hash.split("?")[1];
+      if (searchUrl.indexOf('&random=')) {
+        searchUrl = searchUrl.split('&random=')[0];
+      }
       var URI = decodeURIComponent(searchUrl);
       var parseURI = URI;
       if(URI){

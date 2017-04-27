@@ -480,7 +480,4 @@ p {
     margin-top: 0!important;
   }
 }
-.xs-container{
-  min-height: 100vh;
-}
 </style>

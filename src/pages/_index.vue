@@ -40,7 +40,7 @@
         :gutter="0"
         wrap="wrap"
       >
-        <flexbox-item :span="6" v-for="(portal,$index) in portalLists" :key="$index">
+        <flexbox-item :span="6" v-for="portal in portalLists">
           <div class="pd5">
             <div class="portal text-center size14 bg-white" @click="switchPortal(portal.id)">{{portal.name}}</div>
           </div>
@@ -52,7 +52,6 @@
 
 <script>
 import { Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem } from 'vux'
-import { Loadmore } from 'mint-ui';
 import { getSubscription, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getMainData, getUnreadList } from '@/assets/js/ajax.js'
 import articleList from '@/components/articleList.vue'
 import router from '@/router'
@@ -60,8 +59,7 @@ import $ from 'jquery'
 export default {
   name: 'productInfo',
   components: {
-    Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem, articleList,
-    Loadmore
+    Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem, articleList
   },
   methods: {
     apply(){
