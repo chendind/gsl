@@ -2,6 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import FastClick from 'fastclick'
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
 import App from './App'
 import router from './router'
 import  { AlertPlugin } from 'vux'
@@ -12,6 +14,7 @@ import '@/assets/less/public.less'
 FastClick.attach(document.body)
 
 Vue.use(AlertPlugin)
+Vue.use(MintUI)
 
 Vue.config.productionTip = false
 
@@ -35,26 +38,33 @@ Vue.filter('outdated', (items) => {
 /* eslint-disable no-new */
 new Vue({
   router,
+  data(){
+    return {
+      disabledLink: false,
+    }
+  },
   methods: {
     openMobileWindow(url, name, callback){
-      const url2name = {
-        unreadArticle: '最新消息',
-        article: '新闻详情',
-        education: '教育培训',
-        policy: '政策解读',
-        questionaire: '问卷调查',
-        summary: '市联概况',
-        trade: '招商经贸',
-        public: '游客页面',
-      }
-      if (location.pathname.indexOf('Index')>=0) {
-        // console.log(`index.html#/${url}`, name || url2name[url] || "")
+      if (!disabledLink) {
+        const url2name = {
+          unreadArticle: '最新消息',
+          article: '新闻详情',
+          education: '教育培训',
+          policy: '政策解读',
+          questionaire: '问卷调查',
+          summary: '市联概况',
+          trade: '招商经贸',
+          public: '游客页面',
+        }
+        if (location.pathname.indexOf('Index')>=0) {
+          // console.log(`index.html#/${url}`, name || url2name[url] || "")
 
-        Bridge.openMobileWindow(`${location.origin+location.pathname}#/${url}`, name || url2name[url] || "", (result) => {
-          callback&&callback(result);
-        });
-      } else {
-        router.push({path: url})
+          Bridge.openMobileWindow(`${location.origin+location.pathname}#/${url}`, name || url2name[url] || "", (result) => {
+            callback&&callback(result);
+          });
+        } else {
+          router.push({path: url})
+        }
       }
     },
     // 把对象转换成字符串，并进行URI编码，用于url中的查询参数拼接

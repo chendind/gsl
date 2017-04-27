@@ -1,11 +1,6 @@
 <template>
   <div>
-    <mt-loadmore
-      :top-method="onPulldownLoading"
-      :bottom-method="onPullupLoading"
-      :bottom-all-loaded="allLoaded"
-      ref="loadmore"
-    >
+    <mt-loadmore :top-method="onPulldownLoading" :bottom-method="onPullupLoading" :bottom-all-loaded="allLoaded" ref="loadmore">
       <div>
         <swiper>
           <swiper-item v-for="(carousel, $index) in carousels" :key="$index" class="carouselBox">
@@ -63,16 +58,14 @@ export default {
       console.log('立即申请');
     },
     getNewestMainData(){
-      this.$root.disabledLink = true;
       getMainData(1, this.$data.articleThemes).done((data) => {
         this.$data.articles = data.order;
         this.$refs.loadmore.onTopLoaded();
+        // this.$refs.loadmore.enablePullup();
         this.$data.allLoaded = false;
-        this.$root.disabledLink = false;
       });
     },
     getMoreMainData(){
-      this.$root.disabledLink = true;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
       getMainData(page, this.$data.articleThemes).done((data) => {
         if (data.order.length > 0) {
@@ -82,12 +75,13 @@ export default {
           ];
           this.$refs.loadmore.onBottomLoaded();
           if (data.order.length < 10) {
+            // this.$refs.loadmore.disablePullup();
             this.$data.allLoaded = true;
           }
         } else {
+          // this.$refs.loadmore.disablePullup();
           this.$data.allLoaded = true;
         }
-        this.$root.disabledLink = false;
       });
     },
     getUnreadList(){
@@ -188,6 +182,9 @@ export default {
     },
     togglePortalBox(){
       this.$data.showPortalListBox = !this.$data.showPortalListBox;
+    },
+    onScroll(position){
+      console.log(position.top);
     }
   },
   data () {

@@ -92,7 +92,7 @@ export default {
       type: Boolean,
       default: true,
       required: false,
-    }
+    },
   },
   methods: {
     goArticle(id){
