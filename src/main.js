@@ -4,10 +4,14 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 import App from './App'
 import router from './router'
+import  { AlertPlugin } from 'vux'
 import '@/assets/js/public.js'
+import '@/assets/js/vconsole.min.js'
 import '@/assets/less/public.less'
 
 FastClick.attach(document.body)
+
+Vue.use(AlertPlugin)
 
 Vue.config.productionTip = false
 

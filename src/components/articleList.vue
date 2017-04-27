@@ -90,7 +90,7 @@ export default {
     },
     showDateoutLabel: {
       type: Boolean,
-      defalut: true,
+      default: true,
       required: false,
     }
   },

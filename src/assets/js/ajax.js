@@ -17,7 +17,8 @@ export const getUserData = (open_id) => {
     }
   });
 }
-export const getFollowState = (user_id) => {
+export const getSubscription = (user_id) => {
+  // 用户是否关注了该公众号
   return $.ajax({
     url: "/home/user/get_subscriptions",
     data: {
