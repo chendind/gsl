@@ -14,7 +14,7 @@
     > 
       <div>
         <x-img class="top-pic" :src="topPic"></x-img>
-        <tab active-color="#0084ff">
+        <tab class="tab-bar" active-color="#0084ff">
           <tab-item selected @on-item-click="onItemClick">最新问卷</tab-item>
           <tab-item @on-item-click="onItemClick">历史问卷</tab-item>
         </tab>
@@ -24,7 +24,7 @@
         </div>
         <!-- 最新问卷 -->
         <div v-else>
-          <questionaire-sheet></questionaire-sheet>
+          <questionaire-list :questionaires="questionaires"></questionaire-list>
         </div>
       </div>
     </scroller>
@@ -33,20 +33,20 @@
 <script>
 import { Scroller, XImg, Grid, GridItem, Tab, TabItem} from 'vux'
 import articleList from '@/components/articleList.vue'
-import questionaireSheet from '@/components/questionaireSheet.vue'
+import questionaireList from '@/components/questionaireList.vue'
 import $ from 'jquery'
 import { getUnreadList, getMainData, getThemeTag } from '@/assets/js/ajax.js'
 export default {
   name: 'education',
   components: {
     Scroller, XImg, Grid, GridItem, Tab, TabItem,
-    articleList, questionaireSheet
+    articleList, questionaireList
   },
   data() {
     return {
       numb:0,
       themeTags:[],
-      articles: [],
+      questionaires: [],
       pulldownConfig: {
         content: 'Pull Down To Refresh',
         height: 60,
@@ -66,7 +66,7 @@ export default {
         loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
         clsPrefix: 'xs-plugin-pullup-'
       },
-      topPic:'http://portal.xiyoukeji.com/webTest/source/img/wenjuanBanner.png'
+      topPic:require('@/assets/image/wenjuanBanner.png')
     }
   },
   methods: {
@@ -77,7 +77,7 @@ export default {
       const themeId = localStorage.getItem('themeId');
       getMainData(1, themeId).done((data) => {
         if (data.state == 0) {
-          this.$data.articles = data.order;
+          this.$data.questionaires = data.order;
           this.$refs.scroller.donePulldown();
           this.$refs.scroller.enablePullup();
         }
@@ -165,7 +165,7 @@ export default {
   height:50vw;
 }
 
-.theme-bar{
-  margin-bottom:13px;
+.tab-bar{
+  margin-bottom:11px;
 }
 </style>

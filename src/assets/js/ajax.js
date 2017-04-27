@@ -119,7 +119,14 @@ export const getThemeTag = (themeId) => {
     }
   });
 }
-
+export const getArticleVoteCount = (articleId) => {
+  return $.ajax({
+    url:'/home/article/ArticleVoteCount',
+    data: {
+      id: articleId
+    }
+  });
+}
 
 
 

@@ -60,7 +60,7 @@ export default {
         loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
         clsPrefix: 'xs-plugin-pullup-'
       },
-      topPic:'http://portal.xiyoukeji.com/webTest/source/img/top_new.png'
+      topPic:require('@/assets/image/top_1.png')
     }
   },
   methods: {

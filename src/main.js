@@ -19,6 +19,10 @@ Vue.filter('time1', (value) => {
   const date = getFormatTime(value);
   return `${date.y}年${date.m}月${date.d}日`;
 });
+Vue.filter('time2', (value) => {
+  const date = getFormatTime(value);
+  return `${date.y}-${date.m}-${date.d}`;
+});
 
 /* eslint-disable no-new */
 new Vue({
