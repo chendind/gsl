@@ -15,7 +15,7 @@
       <div>
         <x-img class="top-pic" :src="topPic"></x-img>
         <grid class="grid theme-bar" :rows="5">
-          <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle');">
+          <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle')">
             <img slot="icon" class="grid-item-icon" :src="themeTag.photo">
             <span slot="label" class="grid-item-label">{{themeTag.name}}</span>
           </grid-item>

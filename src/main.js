@@ -23,6 +23,10 @@ Vue.filter('time2', (value) => {
   const date = getFormatTime(value);
   return `${date.y}-${date.m}-${date.d}`;
 });
+//问卷调查中使用
+Vue.filter('outdated', (items) => {
+  return items.filter(item => item.end_time*1000 < new Date().getTime());
+});
 
 /* eslint-disable no-new */
 new Vue({

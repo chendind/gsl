@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="questionaire in questionaires" @click="goArticle(questionaire.id)">
+    <div v-for="questionaire in questionaires" @click="setItem('questionaireId',questionaire.id);$root.openMobileWindow('questionaireDetail')">
       <flexbox class="questionaire-sheet" orient="vertical">
         <flexbox-item>
           {{questionaire.title}}
@@ -10,7 +10,7 @@
             <flexbox-item>
               <span>
                 <img src="http://portal.xiyoukeji.com/webTest/source/img/user.png" class="little-icon">
-                {{articleVoteCount(questionaire.id)}}{{voteCount}}{{hehe}}人参与
+                {{questionaire.voteCount}}人参与
               </span>
             </flexbox-item>
             <flexbox-item class="release-date">
@@ -30,7 +30,6 @@
 </template>
 <script>
 import { Flexbox, FlexboxItem } from 'vux'
-import { getPortalArticle, getArticleVoteCount } from '@/assets/js/ajax.js'
 export default {
   name: 'questionaireList',
   components: {
@@ -43,28 +42,10 @@ export default {
       required: false,
     }
   },
-  data(){
-    return {
-      voteCount:{},
-      hehe:'hehe'
-    }
-  },
   methods: {
-    goArticle(id){
-      const url = this.$root.encodeObj({
-        id
-      });
-      this.$root.openMobileWindow(`article?${url}`);
-    },
-    // articleVoteCount(id){
-    //   getArticleVoteCount(id).done(data=>{
-    //     this.voteCount[id]=data.order.count;
-    //     console.log(this.$data)
-    //   });
-    // }
-  },
-  mounted(){
-    console.log(this.questionaires)
+    setItem:function(a,b) {
+      localStorage.setItem(a,b);
+    }
   }
 }
 </script>

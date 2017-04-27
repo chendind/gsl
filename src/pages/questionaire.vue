@@ -20,7 +20,7 @@
         </tab>
         <!-- 历史问卷 -->
         <div v-if="numb === 1">
-          历史问卷
+          <questionaire-list :questionaires="questionaires | outdated"></questionaire-list>
         </div>
         <!-- 最新问卷 -->
         <div v-else>
@@ -35,7 +35,7 @@ import { Scroller, XImg, Grid, GridItem, Tab, TabItem} from 'vux'
 import articleList from '@/components/articleList.vue'
 import questionaireList from '@/components/questionaireList.vue'
 import $ from 'jquery'
-import { getUnreadList, getMainData, getThemeTag } from '@/assets/js/ajax.js'
+import { getUnreadList, getMainData, getThemeTag, getArticleVoteCount } from '@/assets/js/ajax.js'
 export default {
   name: 'education',
   components: {
@@ -77,7 +77,14 @@ export default {
       const themeId = localStorage.getItem('themeId');
       getMainData(1, themeId).done((data) => {
         if (data.state == 0) {
-          this.$data.questionaires = data.order;
+          let questionaires = [];
+          for(let questionaire of data.order){
+            getArticleVoteCount(questionaire.id).done(data=>{
+              questionaire.voteCount=data.order.count;
+              questionaires.push(questionaire);
+            });
+          }
+          this.$data.questionaires = questionaires;
           this.$refs.scroller.donePulldown();
           this.$refs.scroller.enablePullup();
         }

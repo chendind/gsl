@@ -127,10 +127,22 @@ export const getArticleVoteCount = (articleId) => {
     }
   });
 }
-
-
-
-
+export const getArticleVoteInfo = (articleId) => {
+  return $.ajax({
+    url:'/home/article/ArticleVoteInfo',
+    data: {
+      id: articleId
+    }
+  });
+}
+export const getVoteInfo = (articleId) => {
+  return $.ajax({
+    url:'/home/vote/VoteInfo',
+    data: {
+      id: articleId
+    }
+  });
+}
 
 
 
