@@ -18,7 +18,7 @@
           </swiper-item>
         </swiper>
         <grid class="grid bg-white no-before no-after" :rows="5">
-          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);$root.openMobileWindow(theme.url, theme.theme)">
+          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);goTheme(theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
@@ -35,12 +35,21 @@
         <article-list :articles="articles" :showDateoutLabel="false"></article-list>
       </div>
     </scroller>
+    <div class="scrollBox portalListsBox pd10" v-show="showPortalListBox">
+      <flexbox
+        :gutter="0"
+        wrap="wrap"
+        class="pd5"
+      >
+        <flexbox-item class="pd5" :span="6" v-for="portal in portalLists"><div class="portal text-center size14 bg-white" @click="switchPortal(portal.id)">{{portal.name}}</div></flexbox-item>
+      </flexbox>
+    </div>
   </div>
 </template>
 
 <script>
 import { Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem } from 'vux'
-import { getFollowState, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getMainData, getUnreadList } from '@/assets/js/ajax.js'
+import { getSubscription, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getMainData, getUnreadList } from '@/assets/js/ajax.js'
 import articleList from '@/components/articleList.vue'
 import router from '@/router'
 import $ from 'jquery'
@@ -78,62 +87,58 @@ export default {
       });
     },
     getUnreadList(){
-      const factionId = localStorage.getItem('factionId');
-      getUnreadList(1, factionId).done((data) => {
+      getUnreadList(1, this.$data.portalId).done((data) => {
         if (data.state == 0) {
           this.$data.unreadNumber = data.open_count;
         }
       })
     },
     allRefresh(){
-      const userId = localStorage.getItem('userId');
-      const factionId = localStorage.getItem('factionId');
+      const userId = this.$data.userId;
+      const portalId = this.$data.portalId;
       if (!userId) {
         router.replace('login');
       }
-      getFollowState(userId).done((data) => {
-        if (data.state == 0) {
-          this.getUnreadList();
-          $.when(
-            getPortalArticle(factionId),
-            getPortalCarousel(factionId),
-            getPortalTheme(factionId),
-          ).done((data1, data2, data3) => {
-            if (data1[0].state == 0) {
-              this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
-                return item.id;
-              });
-              localStorage.setItem('articleThemes', this.$data.articleThemes);
-              this.getNewestMainData();
-            }
-            if (data2[0].state == 0) {
-              this.$data.carousels = data2[0].order.carousel;
-            }
-            if (data3[0].state == 0) {
-              this.$data.themes = data3[0].order.theme.map((item, index) => {
-                let url;
-                switch(item.id - 0){
-                  case 151: url = 'teamwork'; break;
-                  case 146: url = 'policy'; break; // 政策解读
-                  case 147: url = 'education'; break; // 教育培训
-                  case 149: url = 'educationTraining'; break;
-                  case 178: url = 'mailBoxList'; break;
-                  case 143: url = 'summary'; break; // 市联概况
-                  case 144: url = 'announce'; break; // 通知公告
-                  case 148: url = 'questionaire'; break; // 问卷调查
-                  case 177: url = 'trade'; break; // 招商经贸
-                  default: url = `themeList?id=${item.id}`;
-                }
-                return {
-                  ...item,
-                  url: item.link || url,
-                }
-              });
-            }
-            this.$refs.scroller.donePulldown();
-          })
+      // 获得未读消息
+      this.getUnreadList();
+      $.when(
+        getPortalArticle(portalId),
+        getPortalCarousel(portalId),
+        getPortalTheme(portalId),
+      ).done((data1, data2, data3) => {
+        if (data1[0].state == 0) {
+          this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
+            return item.id;
+          });
+          localStorage.setItem('articleThemes', this.$data.articleThemes);
+          this.getNewestMainData();
         }
-      });
+        if (data2[0].state == 0) {
+          this.$data.carousels = data2[0].order.carousel;
+        }
+        if (data3[0].state == 0) {
+          this.$data.themes = data3[0].order.theme.map((item, index) => {
+            let url;
+            switch(item.id - 0){
+              case 151: url = 'teamwork'; break;
+              case 146: url = 'policy'; break; // 政策解读
+              case 147: url = 'education'; break; // 教育培训
+              case 149: url = 'educationTraining'; break;
+              case 178: url = 'mailBoxList'; break;
+              case 143: url = 'summary'; break; // 市联概况
+              case 144: url = 'announce'; break; // 通知公告
+              case 148: url = 'questionaire'; break; // 问卷调查
+              case 177: url = 'trade'; break; // 招商经贸
+              default: url = `themeList?id=${item.id}`;
+            }
+            return {
+              ...item,
+              url: item.link || url,
+            }
+          });
+        }
+        this.$refs.scroller.donePulldown();
+      })
     },
     onPulldownLoading(){
       console.log('onPulldownLoading');
@@ -145,10 +150,45 @@ export default {
     },
     setItem(a,b){
       localStorage.setItem(a,b);
+    },
+    goTheme(theme){
+      if (theme.id == 150) {
+        // 用户点击了订阅服务
+        if (localStorage.getItem('userType') == 'tourist') {
+          // 判断用户是不是游客
+          this.$vux.alert.show({
+            title: '提示',
+            content: '游客暂不支持咨询服务!',
+            onShow () {},
+            onHide () {}
+          });
+          return;
+        }
+        // 获得是否订阅公众号
+        getSubscription(localStorage.getItem('userId')).done((data) => {
+          if (data.state == 0) {
+            Bridge.openSubscription('21415');
+          } else {
+            Bridge.openSubscriptionInfo('21415');
+          }
+        });
+      } else {
+        this.$root.openMobileWindow(theme.url, theme.theme)
+      }
+    },
+    switchPortal(portalId){
+      this.$data.portalId = portalId;
+      localStorage.setItem('portalId', portalId);
+      this.allRefresh();
+      this.showPortalListBox = false;
     }
   },
   data () {
     return {
+      showPortalListBox: true,
+      userId: localStorage.getItem('userId'),
+      portalLists: JSON.parse(localStorage.getItem('portalLists')),
+      portalId: localStorage.getItem('portalId'),
       carousels: [],
       themes: [],
       articleThemes: [],
@@ -176,7 +216,19 @@ export default {
     }
   },
   mounted() {
+    console.log(`userType: ${localStorage.getItem('userType')}`)
+    console.log(`userId: ${localStorage.getItem('userId')}`)
     this.allRefresh();
+    if (this.$data.portalLists.length > 1) {
+      Bridge.addMobileWindowButton('切换',() => {
+        this.$data.showPortalListBox = !this.$data.showPortalListBox;
+        return true;
+      });
+    } else {
+      Bridge.addMobileWindowButton('',() => {
+        return true;
+      });
+    }
   },
   updated() {
     this.$refs.scroller.reset();
@@ -218,7 +270,20 @@ export default {
   color: #fff;
   line-height: 1;
 }
-
+.portalListsBox{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background-color: #efeff4;
+  .portal{
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+  }
+}
 
 </style>
 <style lang='less'>

@@ -4,10 +4,14 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 import App from './App'
 import router from './router'
+import  { AlertPlugin } from 'vux'
 import '@/assets/js/public.js'
+import '@/assets/js/vconsole.min.js'
 import '@/assets/less/public.less'
 
 FastClick.attach(document.body)
+
+Vue.use(AlertPlugin)
 
 Vue.config.productionTip = false
 
@@ -19,7 +23,6 @@ Vue.filter('time1', (value) => {
   const date = getFormatTime(value);
   return `${date.y}年${date.m}月${date.d}日`;
 });
-
 /* eslint-disable no-new */
 new Vue({
   router,
