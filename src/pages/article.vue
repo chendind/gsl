@@ -17,6 +17,7 @@
         <div class="paragraph" v-html="text"></div>
       </div>
     </div>
+
     <grid class="grid bottom-operator bg-white no-before no-after" :rows="2">
       <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleDianzan()">
         <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_grey.png')" v-show="!article_like">
@@ -29,16 +30,29 @@
         <span slot="label" class="grid-item-label size12 color-light-grey">收藏 {{measure_count}}</span>
       </grid-item>
     </grid>
-
+    <div class="writing-button">
+      <div class="round-button" style="position: relative;z-index: 1;">
+        <img :src="require('@/assets/image/edit_n.png')" v-show="!isShowSubButton" @click="showSubButton">
+        <img :src="require('@/assets/image/cancel.png')" v-show="isShowSubButton" @click="hideSubButton">
+      </div>
+      <div class="sub-button-box fade-in-effect" :class="{'show': isShowSubButton}">
+        <div class="round-button" @click="$root.openMobileWindow('advice')">
+          <img :src="require('@/assets/image/advice.png')">
+        </div>
+        <div class="round-button mv10" @click="$root.openMobileWindow('prosume')">
+          <img :src="require('@/assets/image/prosume.png')">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { getArticle, toggleDianzan, toggleShoucang } from '@/assets/js/ajax.js'
-import { Scroller, Grid, GridItem } from 'vux'
+import { Scroller, Swiper, SwiperItem, Grid, GridItem } from 'vux'
 export default {
   name: '',
   components: {
-    Scroller, Grid, GridItem
+    Scroller, Swiper, SwiperItem, Grid, GridItem
   },
   methods: {
     toggleDianzan(){
@@ -56,6 +70,12 @@ export default {
           this.$data.ismeasure = 1 - this.$data.ismeasure;
         }
       })
+    },
+    showSubButton(){
+      this.$data.isShowSubButton = true;
+    },
+    hideSubButton(){
+      this.$data.isShowSubButton = false;
     }
   },
   data() {
@@ -70,7 +90,8 @@ export default {
       measure_count: 0,
       text: '',
       theme: '',
-      title: ''
+      title: '',
+      isShowSubButton: false,
     }
   },
   mounted() {
@@ -119,6 +140,34 @@ export default {
 }
 .grid-item{
   padding: 2px 10px !important;
+}
+.writing-button{
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+}
+.round-button{
+  &>img{
+    display: block;
+    width: 53px;
+    height: 53px;
+  }
+}
+.sub-button-box{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 53px;
+  opacity: 0;
+  transform: translateX(0) translateY(-80px) translateZ(0);
+  z-index: 0;
+  &.show{
+    opacity: 1;
+    transform: translateX(0) translateY(-126px) translateZ(0);
+  }
+}
+.fade-in-effect{
+  transition: all 500ms ease;
 }
 </style>
 <style lang='less'>

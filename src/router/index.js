@@ -10,9 +10,13 @@ import education from '@/pages/education'
 import questionaire from '@/pages/questionaire'
 import trade from '@/pages/trade'
 import article from '@/pages/article'
-import tagArticle from '@/pages/tagArticle' 
+import tagArticle from '@/pages/tagArticle'
 import questionaireDetail from '@/pages/questionaireDetail'
 import joinerList from '@/pages/joinerList'
+import mutualAid from '@/pages/mutualAid'
+import advice from '@/pages/advice'
+import prosume from '@/pages/prosume'
+
 Vue.use(Router)
 
 export default new Router({
@@ -85,6 +89,21 @@ export default new Router({
       path: '/joinerList',
       name: 'joinerList',
       component: joinerList
+    },
+    {
+      path: '/mutualAid',
+      name: 'mutualAid',
+      component: mutualAid
+    },
+    {
+      path: '/advice',
+      name: 'advice',
+      component: advice
+    },
+    {
+      path: '/prosume',
+      name: 'prosume',
+      component: prosume
     },
   ]
 })

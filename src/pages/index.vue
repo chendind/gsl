@@ -7,12 +7,36 @@
       ref="loadmore"
     >
       <div>
-        <swiper>
+        <swiper
+          dots-position="center"
+          :show-dots="carousels.length > 1"
+        >
           <swiper-item v-for="(carousel, $index) in carousels" :key="$index" class="carouselBox">
             <img :src="carousel.photo">
           </swiper-item>
         </swiper>
-        <grid class="grid bg-white no-before no-after" :rows="5">
+        <swiper
+          v-if="themeLayout.ispagination === 'true' || themeLayout.ispagination"
+          dots-position="center"
+          :height="`${themeLayout.row * 62 + 15}px`"
+          class="bg-white"
+          :show-dots="Math.ceil(themes.length / (themeLayout.column * themeLayout.row))>1"
+        >
+          <swiper-item v-for="n in Math.ceil(themes.length / (themeLayout.column * themeLayout.row))">
+            <grid class="grid bg-white no-before no-after" :rows="themeLayout.column">
+              <grid-item
+                class="grid-item grid-item1 no-before no-after"
+                v-for="(theme, $index) in themes.slice((n-1) * themeLayout.column * themeLayout.row, n * themeLayout.column * themeLayout.row)"
+                :key="$index"
+                @on-item-click="setItem('themeId',theme.id);goTheme(theme)"
+              >
+                <img slot="icon" class="grid-item-icon" :src="theme.logo">
+                <span slot="label" class="grid-item-label">{{theme.theme}}</span>
+              </grid-item>
+            </grid>
+          </swiper-item>
+        </swiper>
+        <grid class="grid bg-white no-before no-after" :rows="themeLayout.column" v-if="themeLayout.ispagination === 'false' || !themeLayout.ispagination">
           <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);goTheme(theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
@@ -124,7 +148,7 @@ export default {
           this.$data.themes = data3[0].order.theme.map((item, index) => {
             let url;
             switch(item.id - 0){
-              case 151: url = 'teamwork'; break;
+              case 151: url = 'mutualAid'; break; // 生活互助
               case 146: url = 'policy'; break; // 政策解读
               case 147: url = 'education'; break; // 教育培训
               case 149: url = 'educationTraining'; break;
@@ -140,6 +164,7 @@ export default {
               url: item.link || url,
             }
           });
+          this.$data.themeLayout = data3[0].order.theme_layout;
         }
         this.$refs.loadmore.onTopLoaded();
       })
@@ -199,26 +224,12 @@ export default {
       portalId: localStorage.getItem('portalId'),
       carousels: [],
       themes: [],
+      themeLayout: {
+        column: 5,
+        ispagination: false,
+        row: 2,
+      },
       articleThemes: [],
-      pulldownConfig: {
-        content: 'Pull Down To Refresh',
-        height: 60,
-        autoRefresh: false,
-        downContent: '下拉刷新',
-        upContent: '释放自动刷新',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pulldown-'
-      },
-      pullupConfig: {
-        content: 'Pull Up To Refresh',
-        pullUpHeight: 60,
-        height: 40,
-        autoRefresh: false,
-        downContent: '上拉加载更多',
-        upContent: '释放自动加载',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pullup-'
-      },
       articles: [],
       unreadNumber: 0,
     }
