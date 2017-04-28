@@ -12,6 +12,7 @@ import trade from '@/pages/trade'
 import article from '@/pages/article'
 import tagArticle from '@/pages/tagArticle' 
 import questionaireDetail from '@/pages/questionaireDetail'
+import joinerList from '@/pages/joinerList'
 Vue.use(Router)
 
 export default new Router({
@@ -79,6 +80,11 @@ export default new Router({
       path: '/questionaireDetail',
       name: 'questionaireDetail',
       component: questionaireDetail
+    },
+    {
+      path: '/joinerList',
+      name: 'joinerList',
+      component: joinerList
     },
   ]
 })

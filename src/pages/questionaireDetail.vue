@@ -1,49 +1,48 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-    <scroller
-      :use-pulldown="true"
-      height="100vh"
-      :pulldown-config="pulldownConfig"
-      :lock-x="true"
-      ref="scroller"
-      @on-pulldown-loading="onPulldownLoading"
-      @on-scroll="onScroll"
-    > 
-      <div v-if="isQuestionaireShown">
-        <cell :border-intent="false">
-          <span slot="after-title">
-            <p v-for="item in detail.text">
-                {{item}}
-            </p>
-          </span>
-        </cell>
-        <div>
-          <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
-        </div>
-      </div>
-      <div v-else> 
-        <x-img class="top-pic" :src="topPic"></x-img>
-          <cell class="questionaire-title" :title="detail.title" :border-intent="false">
-          </cell>
-          <cell :border-intent="false">
-            <span slot="after-title">
-              <img src="iconPic">
-              <span class="release-date">
-                {{detail.in_time | time1}}
+      <div if="questionaireDetail" v-if="!isQuestionaireShown"> 
+        <mt-loadmore
+          :top-method="refresh"
+          :bottom-method="loadBottom"
+          :bottomDistance="bottomDistance"
+          ref="loadmore"
+        >
+          <x-img class="top-pic" :src="topPic"></x-img>
+            <cell class="questionaire-title" :title="detail.title" :border-intent="false">
+            </cell>
+            <cell :border-intent="false">
+              <span slot="after-title">
+                <img src="iconPic">
+                <span class="release-date">
+                  {{detail.in_time | time1}}
+                </span>
               </span>
-            </span>
-          </cell>
-          <cell :border-intent="false">
-            <span slot="after-title">
-              <div class="user-info">
-                已报名<span class="vote-count">{{voteInfo.length}}</span>人
-                <p class='avatar-list'>
-                  <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
+            </cell>
+            <cell :border-intent="false">
+              <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
+                <div class="user-info">
+                  已报名<span class="vote-count">{{voteInfo.length}}</span>人
+                  <p class='avatar-list'>
+                    <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
+                  </p>
+                </div>
+              </span>
+            </cell>
+            <cell :border-intent="false">
+              <span slot="after-title">
+                <p v-for="item in detail.text">
+                    {{item}}
                 </p>
-              </div>
-            </span>
-          </cell>
+              </span>
+            </cell>
+          </mt-loadmore>
+      </div>
+      <div id="questionaire" v-else>
+        <mt-loadmore
+          :top-method="loadTop"
+          ref="loadmore2"
+        >
           <cell :border-intent="false">
             <span slot="after-title">
               <p v-for="item in detail.text">
@@ -51,20 +50,25 @@
               </p>
             </span>
           </cell>
+          <div class="questionaire">
+            <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
+          </div>
+        </mt-loadmore>
       </div>
-    </scroller>
   </div>
 </template>
 <script>
-import { Scroller, XImg, Grid, GridItem, Tab, TabItem, Cell, Group} from 'vux'
+import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group} from 'vux'
+import { Loadmore } from 'mint-ui';
 import { getArticle, getArticleVoteInfo, getVoteInfo } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
 import $ from 'jquery'
 export default {
-  name: 'education',
+  name: 'questionaireDetail',
   components: {
-    Scroller, XImg, Grid, GridItem, Tab, TabItem, Cell, Group ,
-    questionaireChecklist
+    XImg, Grid, GridItem, Tab, TabItem, Cell, Group ,
+    questionaireChecklist,
+    mtLoadmore: Loadmore
   },
   data() {
     return {
@@ -72,33 +76,15 @@ export default {
       voteInfo:[],
       questionaire:[],
       isQuestionaireShown:false,
-      pulldownConfig: {
-        content: 'Pull Down To Refresh',
-        height: 60,
-        autoRefresh: false,
-        downContent: '下拉刷新',
-        upContent: '释放自动刷新',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pulldown-'
-      },
-      pullupConfig: {
-        // content: 'Pull Up To Load',
-        pullUpHeight: 2000,
-        // height: 40,
-        autoRefresh: false,
-        // downContent: '上拉加载问卷',
-        // upContent: '释放开始加载',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在加载...',
-        clsPrefix: 'xs-plugin-pullup-'
-      },
+      bottomDistance:150,
       topPic:require('@/assets/image/top_2.png'),
       iconPic:require('@/assets/image/time_new.png'),
-
     }
   },
   methods: {
-    onPulldownLoading(){
+    refresh(){
       const questionaireId = localStorage.getItem('questionaireId');
+      //获取问卷介绍
       getArticle(questionaireId).done((data) => {
         let detail = data[0];
         //去除html中多余的问卷调查按钮部分
@@ -106,50 +92,44 @@ export default {
         hintHtml.pop();
         detail.text = hintHtml.map(item => item.innerText)
         this.$data.detail = detail;
-        this.$refs.scroller.donePulldown();
-        this.$refs.scroller.enablePullup();
       });
+      //获取报名用户信息
       getArticleVoteInfo(questionaireId).done((data) => {
         if(data.state == 0){
           this.$data.voteInfo = data.order.read;
-          this.$refs.scroller.donePulldown();
-          this.$refs.scroller.enablePullup();
         }
       });
-    },
-    onPullupLoading(){
-      const questionaireId = localStorage.getItem('questionaireId');
+        //获取问卷
       getVoteInfo(questionaireId).done((data) => {
         if(data.state == 0){
-          this.$data.questionaire = data.order.children;
-          this.$data.isQuestionaireShown=true;
-          this.$refs.scroller.donePulldown();
-          this.$refs.scroller.enablePullup();
+          // this.$data.questionaire = data.order[0].children;
+          var temp = [];
+          const questionaire = data.order[0].children;
+          for(let question of questionaire){
+            let options = [];
+            let children = question.children;
+            for(let option of children){
+              options.push(option.text);
+            }
+            question.options = options;
+            temp.push(question);
+          }
+          this.$data.questionaire = temp;
         }
       })
     },
-    onScroll (pos) {
-      if(pos.top>150){
-        const questionaireId = localStorage.getItem('questionaireId');
-        getVoteInfo(questionaireId).done((data) => {
-          console.log(questionaireId,data)
-          if(data.state == 0){
-            this.$data.questionaire = data.order[0].children;
-            console.log(this.$data.questionaire )
-            this.$data.isQuestionaireShown=true;
-            this.$refs.scroller.donePulldown();
-            this.$refs.scroller.enablePullup();
-          }
-        })
-      }
-      this.scrollTop = pos.top
+    loadBottom(){
+      this.$data.isQuestionaireShown=true;
+      this.$refs.loadmore.onBottomLoaded();
+      $("body").scrollTop()
+    },
+    loadTop(){
+      this.$data.isQuestionaireShown=false;
+      this.$refs.loadmore2.onTopLoaded();
     }
   },
-  mounted() {
-    this.onPulldownLoading();
-  },
-  updated() {
-    this.$refs.scroller.reset();
+  created() {
+    this.refresh();
   }
 }
 </script>
@@ -213,8 +193,40 @@ export default {
     height:200px;
 }
 
+.weui-icon-checked ::before{
+  color:red;
+}
+
 .weui-cells__title{
   background-color: white;
   font-size:20px;
 }
+
+.questionaire{
+  margin-top:11px;
+}
+
+#questionaireDetail,#questionaire{
+      /*  Safari,Chrome*/  
+    -webkit-transition-property: all;   
+    -webkit-transition-duration: 10s;   
+    -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1);   
+    /*  Firefox*/  
+    -moz-transition-property: all;   
+    -moz-transition-duration: 3.5s;   
+    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
+    /*  Opera*/  
+    -o-transition-property: all;   
+    -o-transition-duration: .5s;   
+    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
+    /*  IE9*/  
+    -ms-transition-property: all;   
+    -ms-transition-duration: .5s;   
+    -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1); 
+}
+
+#questionaire{
+  overflow:hidden;
+}
+
 </style>

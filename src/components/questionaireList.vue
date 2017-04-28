@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="questionaire in questionaires" @click="setItem('questionaireId',questionaire.id);$root.openMobileWindow('questionaireDetail')">
+    <div v-for="(questionaire,$questionaireIndex) in questionaires" :key="$questionaireIndex" @click="setItem('questionaireId',questionaire.id);$root.openMobileWindow('questionaireDetail')">
       <flexbox class="questionaire-sheet" orient="vertical">
         <flexbox-item>
           {{questionaire.title}}
