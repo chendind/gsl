@@ -200,25 +200,6 @@ export default {
       carousels: [],
       themes: [],
       articleThemes: [],
-      pulldownConfig: {
-        content: 'Pull Down To Refresh',
-        height: 60,
-        autoRefresh: false,
-        downContent: '下拉刷新',
-        upContent: '释放自动刷新',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pulldown-'
-      },
-      pullupConfig: {
-        content: 'Pull Up To Refresh',
-        pullUpHeight: 60,
-        height: 40,
-        autoRefresh: false,
-        downContent: '上拉加载更多',
-        upContent: '释放自动加载',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pullup-'
-      },
       articles: [],
       unreadNumber: 0,
     }
