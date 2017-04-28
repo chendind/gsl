@@ -55,6 +55,7 @@ new Vue({
           summary: '市联概况',
           trade: '招商经贸',
           public: '游客页面',
+          mutualAid: '生活互助',
         }
         if (location.pathname.indexOf('Index')>=0) {
           // console.log(`index.html#/${url}`, name || url2name[url] || "")

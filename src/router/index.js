@@ -10,8 +10,10 @@ import education from '@/pages/education'
 import questionaire from '@/pages/questionaire'
 import trade from '@/pages/trade'
 import article from '@/pages/article'
-import tagArticle from '@/pages/tagArticle' 
+import tagArticle from '@/pages/tagArticle'
 import questionaireDetail from '@/pages/questionaireDetail'
+import mutualAid from '@/pages/mutualAid'
+
 Vue.use(Router)
 
 export default new Router({
@@ -79,6 +81,11 @@ export default new Router({
       path: '/questionaireDetail',
       name: 'questionaireDetail',
       component: questionaireDetail
+    },
+    {
+      path: '/mutualAid',
+      name: 'mutualAid',
+      component: mutualAid
     },
   ]
 })
