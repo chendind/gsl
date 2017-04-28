@@ -164,11 +164,7 @@ export default {
               url: item.link || url,
             }
           });
-          this.$data.themeLayout = {
-            column: data3[0].order.theme_layout.column - 0,
-            row: data3[0].order.theme_layout.row - 0,
-            ispagination: data3[0].order.theme_layout.ispagination == 'true' ? true : false,
-          };
+          this.$data.themeLayout = data3[0].order.theme_layout;
         }
         this.$refs.loadmore.onTopLoaded();
       })
