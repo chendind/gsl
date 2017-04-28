@@ -17,6 +17,7 @@
         <div class="paragraph" v-html="text"></div>
       </div>
     </div>
+
     <grid class="grid bottom-operator bg-white no-before no-after" :rows="2">
       <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleDianzan()">
         <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_grey.png')" v-show="!article_like">
@@ -47,11 +48,11 @@
 </template>
 <script>
 import { getArticle, toggleDianzan, toggleShoucang } from '@/assets/js/ajax.js'
-import { Scroller, Grid, GridItem } from 'vux'
+import { Scroller, Swiper, SwiperItem, Grid, GridItem } from 'vux'
 export default {
   name: '',
   components: {
-    Scroller, Grid, GridItem
+    Scroller, Swiper, SwiperItem, Grid, GridItem
   },
   methods: {
     toggleDianzan(){
