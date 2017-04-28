@@ -45,7 +45,7 @@ new Vue({
   },
   methods: {
     openMobileWindow(url, name, callback){
-      if (!disabledLink) {
+      if (!this.$data.disabledLink) {
         const url2name = {
           unreadArticle: '最新消息',
           article: '新闻详情',
