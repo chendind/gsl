@@ -66,7 +66,8 @@ export default {
   .checklist{
     margin: 0 15px 0 15px;
     border: 1px solid #D9D9D9;
-    border-radius: 10px;
+    border-radius: 5px;
+    padding: 2px 0 2px 0;
 
   }
 

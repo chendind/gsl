@@ -1,60 +1,56 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-      <div if="questionaireDetail" v-if="!isQuestionaireShown"> 
-        <mt-loadmore
-          :top-method="refresh"
-          :bottom-method="loadBottom"
-          :bottomDistance="bottomDistance"
-          ref="loadmore"
-        >
-          <x-img class="top-pic" :src="topPic"></x-img>
-            <cell class="questionaire-title" :title="detail.title" :border-intent="false">
-            </cell>
-            <cell :border-intent="false">
-              <span slot="after-title">
-                <img src="iconPic">
-                <span class="release-date">
-                  {{detail.in_time | time1}}
-                </span>
-              </span>
-            </cell>
-            <cell :border-intent="false">
-              <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
-                <div class="user-info">
-                  已报名<span class="vote-count">{{voteInfo.length}}</span>人
-                  <p class='avatar-list'>
-                    <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
-                  </p>
-                </div>
-              </span>
-            </cell>
-            <cell :border-intent="false">
-              <span slot="after-title">
-                <p v-for="item in detail.text">
-                    {{item}}
-                </p>
-              </span>
-            </cell>
-          </mt-loadmore>
-      </div>
-      <div id="questionaire" v-else>
-        <mt-loadmore
-          :top-method="loadTop"
-          ref="loadmore2"
-        >
-          <cell :border-intent="false">
-            <span slot="after-title">
-              <p v-for="item in detail.text">
-                  {{item}}
-              </p>
+    <mt-loadmore v-if="!isQuestionaireShown"
+      :top-method="refresh"
+      :bottom-method="loadBottom"
+      :bottomDistance="bottomDistance"
+      ref="loadmore"
+    >
+      <x-img class="top-pic" :src="topPic"></x-img>
+        <cell class="questionaire-title" :title="detail.title" :border-intent="false">
+        </cell>
+        <cell :border-intent="false">
+          <span slot="after-title">
+            <img src="iconPic">
+            <span class="release-date">
+              {{detail.in_time | time1}}
             </span>
-          </cell>
-          <div class="questionaire">
-            <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
-          </div>
-        </mt-loadmore>
+          </span>
+        </cell>
+        <cell :border-intent="false">
+          <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
+            <div class="user-info">
+              已报名<span class="vote-count">{{voteInfo.length}}</span>人
+              <p class='avatar-list'>
+                <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
+              </p>
+            </div>
+          </span>
+        </cell>
+        <cell :border-intent="false">
+          <span slot="after-title">
+            <p v-for="item in detail.text">
+                {{item}}
+            </p>
+          </span>
+        </cell>
+      </mt-loadmore>
+    <mt-loadmore v-else id="questionaire"
+     :top-method="loadTop"
+     ref="loadmore2" 
+    >
+      <cell :border-intent="false">
+        <span slot="after-title">
+          <p v-for="item in detail.text">
+              {{item}}
+          </p>
+        </span>
+      </cell>
+      <div class="questionaire">
+        <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
       </div>
+    </mt-loadmore>
   </div>
 </template>
 <script>
@@ -116,12 +112,15 @@ export default {
           }
           this.$data.questionaire = temp;
         }
-      })
+      });
+      this.$refs.loadmore.onTopLoaded();
     },
     loadBottom(){
       this.$data.isQuestionaireShown=true;
       this.$refs.loadmore.onBottomLoaded();
-      $("body").scrollTop()
+      setTimeout(function(){ //滚动条位置temp fix
+        document.body.scrollTop="0";
+      },200) 
     },
     loadTop(){
       this.$data.isQuestionaireShown=false;
