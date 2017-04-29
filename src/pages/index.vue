@@ -54,7 +54,7 @@
         <article-list :articles="articles" :showDateoutLabel="false"></article-list>
       </div>
     </mt-loadmore>
-    <div class="scrollBox portalListsBox pd5" v-show="showPortalListBox">
+    <div class="scroll-box portalListsBox pd5" v-show="showPortalListBox">
       <flexbox
         :gutter="0"
         wrap="wrap"
@@ -151,8 +151,8 @@ export default {
               case 151: url = 'mutualAid'; break; // 生活互助
               case 146: url = 'policy'; break; // 政策解读
               case 147: url = 'education'; break; // 教育培训
-              case 149: url = 'educationTraining'; break;
-              case 178: url = 'mailBoxList'; break;
+              case 149: url = 'merchantStyle'; break; // 杭商风采
+              case 178: url = 'mailbox'; break; // 主席信箱
               case 143: url = 'summary'; break; // 市联概况
               case 144: url = 'announce'; break; // 通知公告
               case 148: url = 'questionaire'; break; // 问卷调查
@@ -187,7 +187,7 @@ export default {
           // 判断用户是不是游客
           this.$vux.alert.show({
             title: '提示',
-            content: '游客暂不支持咨询服务!',
+            content: '游客暂不支持咨询服务！',
             onShow () {},
             onHide () {}
           });

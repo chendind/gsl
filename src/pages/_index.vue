@@ -35,7 +35,7 @@
         <article-list :articles="articles" :showDateoutLabel="false"></article-list>
       </div>
     </scroller>
-    <div class="scrollBox portalListsBox pd5" v-show="showPortalListBox">
+    <div class="scroll-box portalListsBox pd5" v-show="showPortalListBox">
       <flexbox
         :gutter="0"
         wrap="wrap"

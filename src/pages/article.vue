@@ -1,45 +1,64 @@
 <!-- 文章、新闻的详情页 -->
+<!-- 普通的文章页 -->
 <template>
   <div>
-    <div class="scrollBox bg-white">
-      <div class="pd15">
-        <div class="article-content">
-          <div class="title">
-            {{title}}
+    <div v-if="fn === 3 || fn === 1">
+      <div class="scroll-box full-page-box bg-white" style="bottom: 60px;">
+        <div class="pd15">
+          <div class="article-content">
+            <div class="title">
+              {{title}}
+            </div>
+            <div class="meta size14 color-grey mv10">
+              <span class="color-indigo-blue">{{theme}}</span>
+              <span class="mh3">{{author}}</span>
+              <span class="mh3">{{in_time | time1}}</span>
+              <span class="mh5">阅读数：{{read_count}}</span>
+            </div>
           </div>
-          <div class="meta size14 color-grey mv10">
-            <span class="color-indigo-blue">{{theme}}</span>
-            <span class="mh3">{{author}}</span>
-            <span class="mh3">{{in_time | time1}}</span>
-            <span class="mh5">阅读数：{{read_count}}</span>
-          </div>
+          <div class="paragraph" v-html="text"></div>
         </div>
-        <div class="paragraph" v-html="text"></div>
       </div>
     </div>
-
-    <grid class="grid bottom-operator bg-white no-before no-after" :rows="2">
-      <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleDianzan()">
-        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_grey.png')" v-show="!article_like">
-        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_blue.png')" v-show="article_like">
-        <span slot="label" class="grid-item-label size12 color-light-grey">点赞 {{like_count}}</span>
-      </grid-item>
-      <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleShoucang()">
-        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_grey.png')" v-show="!ismeasure">
-        <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_blue.png')" v-show="ismeasure">
-        <span slot="label" class="grid-item-label size12 color-light-grey">收藏 {{measure_count}}</span>
-      </grid-item>
-    </grid>
+    <div v-if="fn === 2" class="full-page-box bg-black color-white">
+      <swiper :show-dots="false" height="100vh">
+        <swiper-item class="swiper-item-box" v-for="(photo, $index) in photo_photo">
+          <div class="text-center pd15">{{$index+1}}/{{photo_photo.length}}</div>
+          <div class="image-box">
+            <img :src="photo.photo">
+          </div>
+          <div class="bottom-text-box pd10">{{photo.text}}</div>
+        </swiper-item>
+      </swiper>
+    </div>
+    <div v-if="fn === 4">
+      <div class="iframe-box" v-html="iframe"></div>
+      <div class="pd15 bg-white">{{title}}</div>
+    </div>
+    <div v-if="fn !== 2">
+      <grid class="grid bottom-operator bg-white no-before no-after" :rows="2">
+        <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleDianzan()">
+          <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_grey.png')" v-show="!article_like">
+          <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_blue.png')" v-show="article_like">
+          <span slot="label" class="grid-item-label size12 color-light-grey">点赞 {{like_count}}</span>
+        </grid-item>
+        <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleShoucang()">
+          <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_grey.png')" v-show="!ismeasure">
+          <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/star_blue.png')" v-show="ismeasure">
+          <span slot="label" class="grid-item-label size12 color-light-grey">收藏 {{measure_count}}</span>
+        </grid-item>
+      </grid>
+    </div>
     <div class="writing-button">
       <div class="round-button" style="position: relative;z-index: 1;">
         <img :src="require('@/assets/image/edit_n.png')" v-show="!isShowSubButton" @click="showSubButton">
         <img :src="require('@/assets/image/cancel.png')" v-show="isShowSubButton" @click="hideSubButton">
       </div>
       <div class="sub-button-box fade-in-effect" :class="{'show': isShowSubButton}">
-        <div class="round-button" @click="$root.openMobileWindow('advice')">
+        <div class="round-button" @click="$root.openMobileWindow(`advice?${$root.encodeObj({id: article_id})}`)">
           <img :src="require('@/assets/image/advice.png')">
         </div>
-        <div class="round-button mv10" @click="$root.openMobileWindow('prosume')">
+        <div class="round-button mv10" @click="$root.openMobileWindow(`prosume?${$root.encodeObj({id: article_id})}`)">
           <img :src="require('@/assets/image/prosume.png')">
         </div>
       </div>
@@ -49,6 +68,7 @@
 <script>
 import { getArticle, toggleDianzan, toggleShoucang } from '@/assets/js/ajax.js'
 import { Scroller, Swiper, SwiperItem, Grid, GridItem } from 'vux'
+import $ from 'jquery'
 export default {
   name: '',
   components: {
@@ -92,6 +112,9 @@ export default {
       theme: '',
       title: '',
       isShowSubButton: false,
+      fn: 0,
+      photo_photo: [],
+      iframe: '',
     }
   },
   mounted() {
@@ -107,6 +130,21 @@ export default {
       this.$data.text = data[0].text;
       this.$data.theme = data[0].theme;
       this.$data.title = data[0].title;
+      this.$data.fn = data[0].function;
+      if (this.$data.fn === 2) {
+        this.$data.photo_photo = data.photo_photo;
+      } else if (this.$data.fn === 4) {
+        if (data[0].text.match(/<iframe.*><\/iframe>/)) {
+          let iframe = data[0].text.match(/<iframe.*><\/iframe>/)[0];
+          const width = iframe.match(/width=['"](\d+)['"]/)[1];
+          const height = iframe.match(/height=['"](\d+)['"]/)[1];
+          const maxWidth = window.innerWidth;
+          const fitHeight = Math.round(maxWidth/width*height);
+          iframe = iframe.replace(/width=['"](\d+)['"]/, `width="${maxWidth}"`);
+          iframe = iframe.replace(/height=['"](\d+)['"]/, `height="${fitHeight}"`);
+          this.$data.iframe = iframe;
+        }
+      }
     })
   },
   updated() {
@@ -114,13 +152,6 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-.scrollBox{
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 60px;
-}
 .article-content{
   .title{
     color: #1a1a1a;
@@ -169,6 +200,28 @@ export default {
 .fade-in-effect{
   transition: all 500ms ease;
 }
+.swiper-item-box{
+  position: relative;
+  .image-box{
+    position: absolute;
+    top: 45%;
+    left: 0;
+    transform: translate(0, -50%);
+    width: 100%;
+    &>img{
+      display: block;
+      width: 100%;
+    }
+  }
+}
+.bottom-text-box{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 20vh;
+  background-color: rgba(0,0,0,0.5);
+}
 </style>
 <style lang='less'>
 .grid-item3 .weui-grid__icon{
@@ -194,3 +247,4 @@ export default {
   }
 }
 </style>
+

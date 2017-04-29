@@ -144,7 +144,28 @@ export const getVoteInfo = (articleId) => {
     }
   });
 }
-
+// 内容推荐
+export const recommend = (article_id, type, text) => {
+  return $.ajax({
+    url:'/home/question/recommend',
+    data: {
+      article_id,
+      type,
+      text,
+    }
+  });
+}
+// 建议
+export const commentapi = (id, type, text) => {
+  return $.ajax({
+    url:'/home/index/commentapi',
+    data: {
+      id,
+      type,
+      text,
+    }
+  });
+}
 
 
 
