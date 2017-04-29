@@ -1,7 +1,7 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-    <mt-loadmore v-if="!isQuestionaireShown"
+    <mt-loadmore v-if="isQuestionaireShown"
       :top-method="refresh"
       :bottom-method="loadBottom"
       :bottomDistance="bottomDistance"
@@ -36,25 +36,28 @@
           </span>
         </cell>
       </mt-loadmore>
-    <mt-loadmore v-else id="questionaire"
-     :top-method="loadTop"
-     ref="loadmore2" 
-    >
-      <cell :border-intent="false">
-        <span slot="after-title">
-          <p v-for="item in detail.text">
-              {{item}}
-          </p>
-        </span>
-      </cell>
-      <div class="questionaire">
-        <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
-      </div>
-    </mt-loadmore>
+    <div v-else>
+      <mt-loadmore
+       :top-method="loadTop"
+       ref="loadmore2" 
+      >
+        <cell :border-intent="false">
+          <span slot="after-title">
+            <p v-for="item in detail.text">
+                {{item}}
+            </p>
+          </span>
+        </cell>
+        <div class="questionaire">
+          <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
+        </div>
+      </mt-loadmore>
+      <x-button type="primary">确认提交</x-button>
+    </div>
   </div>
 </template>
 <script>
-import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group} from 'vux'
+import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton} from 'vux'
 import { Loadmore } from 'mint-ui';
 import { getArticle, getArticleVoteInfo, getVoteInfo } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
@@ -62,7 +65,7 @@ import $ from 'jquery'
 export default {
   name: 'questionaireDetail',
   components: {
-    XImg, Grid, GridItem, Tab, TabItem, Cell, Group ,
+    XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton,
     questionaireChecklist,
     mtLoadmore: Loadmore
   },
@@ -95,25 +98,24 @@ export default {
           this.$data.voteInfo = data.order.read;
         }
       });
-        //获取问卷
+      //获取问卷
       getVoteInfo(questionaireId).done((data) => {
         if(data.state == 0){
-          // this.$data.questionaire = data.order[0].children;
           var temp = [];
           const questionaire = data.order[0].children;
           for(let question of questionaire){
             let options = [];
             let children = question.children;
-            for(let option of children){
-              options.push(option.text);
-            }
+            children.forEach((option,key) => {
+              options.push(this.convert(key)+"  "+option.text);
+            })
             question.options = options;
             temp.push(question);
           }
           this.$data.questionaire = temp;
         }
       });
-      this.$refs.loadmore.onTopLoaded();
+      // this.$refs.loadmore.onTopLoaded();foption
     },
     loadBottom(){
       this.$data.isQuestionaireShown=true;
@@ -125,6 +127,12 @@ export default {
     loadTop(){
       this.$data.isQuestionaireShown=false;
       this.$refs.loadmore2.onTopLoaded();
+    },
+    // 数字转字母
+    convert(num){
+      num++;
+      return num <= 26 ? 
+           String.fromCharCode(num + 64) : convert(~~((num - 1) / 26)) + convert(num % 26 || 26);
     }
   },
   created() {
@@ -201,10 +209,6 @@ export default {
   font-size:20px;
 }
 
-.questionaire{
-  margin-top:11px;
-}
-
 #questionaireDetail,#questionaire{
       /*  Safari,Chrome*/  
     -webkit-transition-property: all;   
@@ -224,8 +228,19 @@ export default {
     -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1); 
 }
 
-#questionaire{
-  overflow:hidden;
+.questionaire{
+  margin-top: 11px;
+  margin-bottom: 44px;
+  padding-bottom: 10px;
+  background-color: white;
 }
 
+.weui-btn{
+  background-color: rgb(0n,132,255)!important;
+  border-radius:0!important;
+  position:fixed;
+  z-index:100;
+  bottom:0;
+  left:0;
+}
 </style>

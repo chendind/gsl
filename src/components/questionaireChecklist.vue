@@ -1,22 +1,21 @@
 <template>
   <div>
     <div v-for="question in questionaire">
-      <span class="label-bar"><span class="choices">多选</span> {{question.text}}</span>
+      <span class="label-bar"><span class="choices">{{question.is_single_choice?"单选":"多选"}}</span> {{question.text}}</span>
       <div class="checklist-wrap">
-        <checklist class="checklist" :options="question.options" @on-change="onChange">
+        <checklist class="checklist" :options="question.options" v-model="checklist[question.question_id]" :max="question.is_single_choice?1:0" @on-change="onChange">
         </checklist>
       </div>
     </div>
-    <x-button type="primary">确认提交</x-button>
   </div>
 </template>
 <script>
-import { Checklist, XButton } from 'vux'
+import { Checklist } from 'vux'
 import $ from 'jquery'
 export default {
   name: 'questionaireChecklist',
   components: {
-    Checklist, XButton
+    Checklist
   },
   props: {
     questionaire: {
@@ -29,8 +28,8 @@ export default {
     return{
       labelPosition: '',
       error: '',
-      commonList: [ 'A.在线预览', 'B.批量上传', 'C.在线编辑', 'D.文件分类' ],
-      options:{}
+      options:{},
+      checklist:{},
     }
   },
   methods: {
@@ -38,6 +37,7 @@ export default {
       //文字跟随checkbox变色
       $(".weui-check:checked").parent().next().find("p").css({color:"#ff6735"});
       $(".weui-check:not(:checked)").parent().next().find("p").css({color:"black"});
+      console.log(this.$data.checklist)
     }
   }
 }
@@ -79,10 +79,11 @@ export default {
     border-bottom:0!important;
   }
 
-  .weui-btn{
-    background-color: rgb(0,132,255)!important;
-    border-radius:0!important;
+  .weui-cell:before{
+    left:0!important;
   }
+
+
 </style>
 
 
