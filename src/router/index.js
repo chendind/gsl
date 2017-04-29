@@ -1,21 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/pages/index'
-import login from '@/pages/login'
-import summary from '@/pages/summary'
-import unreadArticle from '@/pages/unreadArticle'
-import announce from '@/pages/announce'
-import policy from '@/pages/policy'
-import education from '@/pages/education'
-import questionaire from '@/pages/questionaire'
-import trade from '@/pages/trade'
-import article from '@/pages/article'
-import tagArticle from '@/pages/tagArticle'
-import questionaireDetail from '@/pages/questionaireDetail'
-import joinerList from '@/pages/joinerList'
-import mutualAid from '@/pages/mutualAid'
-import advice from '@/pages/advice'
-import prosume from '@/pages/prosume'
 
 Vue.use(Router)
 
@@ -28,82 +12,128 @@ export default new Router({
     {
       path: '/index',
       name: 'index',
-      component: index
+      component(r) {
+        r(require('@/pages/index'));
+      }
     },
     {
       path: '/login',
       name: 'login',
-      component: login
+      component(r){
+        r(require('@/pages/login'));
+      }
     },
     {
       path: '/summary',
       name: 'summary',
-      component: summary
+      component(r){
+        r(require('@/pages/summary'));
+      }
     },
     {
       path: '/unreadArticle',
       name: 'unreadArticle',
-      component: unreadArticle
+      component(r){
+        r(require('@/pages/unreadArticle'));
+      }
     },
     {
       path: '/announce',
       name: 'announce',
-      component: announce
+      component(r){
+        r(require('@/pages/announce'));
+      }
     },
     {
       path: '/policy',
       name: 'policy',
-      component: policy
+      component(r){
+        r(require('@/pages/policy'));
+      }
     },
     {
       path: '/education',
       name: 'education',
-      component: education
+      component(r){
+        r(require('@/pages/education'));
+      }
     },
     {
       path: '/questionaire',
       name: 'questionaire',
-      component: questionaire
+      component(r){
+        r(require('@/pages/questionaire'));
+      }
     },
     {
       path: '/trade',
       name: 'trade',
-      component: trade
+      component(r){
+        r(require('@/pages/trade'));
+      }
+    },
+    {
+      path: '/mailbox',
+      name: 'mailbox',
+      component(r){
+        r(require('@/pages/mailbox'));
+      }
+    },
+    {
+      path: '/merchantStyle',
+      name: 'merchantStyle',
+      component(r){
+        r(require('@/pages/merchantStyle'));
+      }
     },
     {
       path: '/article',
       name: 'article',
-      component: article
+      component(r){
+        r(require('@/pages/article'));
+      }
     },
     {
       path: '/tagArticle',
       name: 'tagArticle',
-      component: tagArticle
+      component(r){
+        r(require('@/pages/tagArticle'));
+      }
     },
     {
       path: '/questionaireDetail',
       name: 'questionaireDetail',
-      component: questionaireDetail
+      component(r){
+        r(require('@/pages/questionaireDetail'));
+      }
     },
     {
       path: '/joinerList',
       name: 'joinerList',
-      component: joinerList
+      component(r){
+        r(require('@/pages/joinerList'));
+      }
     },
     {
       path: '/mutualAid',
       name: 'mutualAid',
-      component: mutualAid
+      component(r){
+        r(require('@/pages/mutualAid'));
+      }
     },
     {
       path: '/advice',
       name: 'advice',
-      component: advice
+      component(r){
+        r(require('@/pages/advice'));
+      }
     },
     {
       path: '/prosume',
       name: 'prosume',
-      component: prosume
+      component(r){
+        r(require('@/pages/prosume'));
+      }
     },
   ]
 })

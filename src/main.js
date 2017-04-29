@@ -45,6 +45,7 @@ new Vue({
   },
   methods: {
     openMobileWindow(url, name, callback){
+      let fullpath;
       if (!this.$data.disabledLink) {
         const url2name = {
           unreadArticle: '最新消息',
@@ -59,14 +60,20 @@ new Vue({
           advice: '建议反馈',
           prosume: '推荐内容',
         }
+        if (url.match('http[s]?://')) {
+          fullpath = url;
+        } else {
+          fullpath = `${location.origin+location.pathname}#/${url}`;
+        }
         if (location.pathname.indexOf('Index')>=0) {
           // console.log(`index.html#/${url}`, name || url2name[url] || "")
 
-          Bridge.openMobileWindow(`${location.origin+location.pathname}#/${url}`, name || url2name[url] || "", (result) => {
+          Bridge.openMobileWindow(fullpath, name || url2name[url] || "", (result) => {
             callback&&callback(result);
           });
         } else {
-          router.push({path: url})
+          location.href = fullpath;
+          // router.push({path: url})
         }
       }
     },

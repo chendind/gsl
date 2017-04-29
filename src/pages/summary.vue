@@ -26,7 +26,7 @@
         </grid-item>
       </grid>
     </div>
-    <div id="all_content" class="scrollBox">
+    <div id="all_content" class="scroll-box">
       <div id="item0" class="mui-control-content">
           <div class="content_box after">
               <h3 align="center">商会简介</h3>
