@@ -23,7 +23,7 @@
           :show-dots="Math.ceil(themes.length / (themeLayout.column * themeLayout.row))>1"
         >
           <swiper-item v-for="n in Math.ceil(themes.length / (themeLayout.column * themeLayout.row))">
-            <grid class="grid bg-white no-before no-after" :rows="themeLayout.column">
+            <grid class="grid theme-bar bg-white no-before no-after" :rows="themeLayout.column">
               <grid-item
                 class="grid-item grid-item1 no-before no-after"
                 v-for="(theme, $index) in themes.slice((n-1) * themeLayout.column * themeLayout.row, n * themeLayout.column * themeLayout.row)"
@@ -36,7 +36,7 @@
             </grid>
           </swiper-item>
         </swiper>
-        <grid class="grid bg-white no-before no-after" :rows="themeLayout.column" v-if="themeLayout.ispagination === 'false' || !themeLayout.ispagination">
+        <grid class="grid theme-bar bg-white no-before no-after" :rows="themeLayout.column" v-if="themeLayout.ispagination === 'false' || !themeLayout.ispagination">
           <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);goTheme(theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem } from 'vux'
+import { Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem } from 'vux'
 import { Loadmore } from 'mint-ui';
 import { getSubscription, getPortalLists, getPortalArticle, getPortalCarousel, getPortalTheme, getMainData, getUnreadList } from '@/assets/js/ajax.js'
 import articleList from '@/components/articleList.vue'
@@ -79,7 +79,7 @@ import $ from 'jquery'
 export default {
   name: 'productInfo',
   components: {
-    Panel, Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem, articleList,
+    Swiper, SwiperItem, Grid, GridItem, Scroller, Flexbox, FlexboxItem, articleList,
     mtLoadmore: Loadmore,
   },
   methods: {
@@ -264,19 +264,6 @@ export default {
     height: 100%;
   }
 }
-.grid{
-  padding: 10px 0 5px;
-}
-.grid-item{
-  padding: 2px 10px !important;
-}
-.grid-item-icon{
-
-}
-.grid-item-label{
-  color: #999;
-  font-size: 12px;
-}
 .unreadTipBox {
   margin: 10px 0;
   text-align: center;
@@ -302,17 +289,6 @@ export default {
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 8px;
-  }
-}
-</style>
-<style lang='less'>
-.grid-item1{
-  .weui-grid__icon{
-    width: 9.5vw;
-    height: 9.5vw;
-  }
-  .weui-grid__label{
-    margin-top: 0!important;
   }
 }
 </style>

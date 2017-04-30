@@ -135,6 +135,13 @@ export default new Router({
         r(require('@/pages/prosume'));
       }
     },
+    {
+      path: '/mail', // 主席信箱中的二级页面
+      name: 'mail',
+      component(r){
+        r(require('@/pages/mail'));
+      }
+    },
   ]
 })
 

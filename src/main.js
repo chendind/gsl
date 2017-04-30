@@ -60,7 +60,7 @@ new Vue({
           advice: '建议反馈',
           prosume: '推荐内容',
         }
-        if (url.match('http[s]?://')) {
+        if (url.match(/http[s]?:\/\//)) {
           fullpath = url;
         } else {
           fullpath = `${location.origin+location.pathname}#/${url}`;

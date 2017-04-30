@@ -2,6 +2,9 @@ body{
     background-color: #e5e5e5 !important;
     font-family: 'Lantinghei SC', 'Microsoft Yahei';
 }
+input, textarea, select{
+  font-family: 'Lantinghei SC', 'Microsoft Yahei';
+}
 .after{
     &:after{
         display: block;
@@ -89,6 +92,11 @@ body{
     width: 20px !important;
     height: 20px !important;
     margin-bottom: 5px;
+}
+.icon-md{
+  .icon-xs;
+  width: 30px !important;
+  height: 30px !important;
 }
 .no-before{
   &:before{
@@ -208,10 +216,35 @@ body{
   background-color: #0084ff !important;
   color: #fff !important;
 }
+.theme-bar{
+  padding: 10px 0 5px;
+  .grid-item1{
+    .weui-grid__icon{
+      width: 9.5vw;
+      height: 9.5vw;
+    }
+  }
+  .grid-item{
+    padding: 2px !important;
+    &:before{
+      display: none;
+    }
+    &:after{
+      display: none;
+    }
+    .grid-item-label{
+      color: #999;
+      font-size: 12px;
+      line-height: 1.3;
+      text-align: center;
+      white-space: normal;
+      display: block;
+    }
+  }
+}
+.article-style-1{
 
-
-
-
+}
 
 
 

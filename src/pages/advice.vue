@@ -1,7 +1,7 @@
 <!-- 建议反馈 -->
 <template>
   <div>
-    <group label-width="4.5em" label-margin-right="2em" label-align="right">
+    <group label-width="4.5em" label-margin-right="2em" label-align="right" gutter="0">
       <selector title="建议分类" :options="['提案', '建议', '问题', '其他']" v-model="category"></selector>
       <x-textarea class="vux-x-textarea" title="建议内容" placeholder="请输入内容" :show-counter="false" :rows="5" v-model="text"></x-textarea>
     </group>

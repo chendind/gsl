@@ -75,7 +75,7 @@
   </div>
 </template>
 <script>
-import { Flexbox, FlexboxItem } from 'vux'
+import { Panel, Flexbox, FlexboxItem } from 'vux'
 import { getPortalArticle } from '@/assets/js/ajax.js'
 export default {
   name: 'articleList',

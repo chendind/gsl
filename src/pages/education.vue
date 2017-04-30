@@ -11,16 +11,16 @@
       ref="scroller"
       @on-pulldown-loading="onPulldownLoading"
       @on-pullup-loading="onPullupLoading"
-    > 
+    >
       <div>
         <x-img class="top-pic" :src="topPic"></x-img>
-        <grid class="grid theme-bar" :rows="5">
+        <grid class="grid theme-bar bg-white" :rows="5">
           <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle')">
             <img slot="icon" class="grid-item-icon" :src="themeTag.photo">
             <span slot="label" class="grid-item-label">{{themeTag.name}}</span>
           </grid-item>
         </grid>
-        <article-list :articles="articles">
+        <article-list class="mv10" :articles="articles">
         </article-list>
       </div>
     </scroller>
@@ -30,7 +30,7 @@
 import { Scroller, XImg, Grid, GridItem} from 'vux'
 import articleList from '@/components/articleList.vue'
 import $ from 'jquery'
-import { getUnreadList, getMainData, getThemeTag } from '@/assets/js/ajax.js'
+import { getMainData, getThemeTag } from '@/assets/js/ajax.js'
 export default {
   name: 'education',
   components: {
@@ -82,7 +82,7 @@ export default {
     onPullupLoading(){
       const factionId = localStorage.getItem('factionId');
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getUnreadList(page, factionId).done((data) => {
+      getMainData(page, factionId).done((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,
@@ -110,49 +110,6 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-/*original*/
-.grid{
-  padding: 10px 0 5px;
-  background-color: #fff;
-}
-.grid-item{
-  padding: 2px 10px !important;
-  &:before{
-    display: none;
-  }
-  &:after{
-    display: none;
-  }
-}
-.grid-item-icon{
-
-}
-.grid-item-label{
-  font-size: 12px;
-}
-.unreadTipBox {
-  margin: 10px 0;
-  text-align: center;
-}
-.unreadTip {
-  display: inline-block;
-  padding: 8px 20px;
-  font-size: 12px;
-  border-radius: 14px;
-  background-color: #cecfd0;
-  color: #fff;
-  line-height: 1;
-}
-
-.grid-item1{
-  .weui-grid__icon{
-    width: 9.5vw;
-    height: 9.5vw;
-  }
-  .weui-grid__label{
-    margin-top: 0!important;
-  }
-}
 .xs-container{
   min-height: 100vh;
 }
@@ -162,9 +119,5 @@ export default {
   display: block;
   width: 100%;
   height:50vw;
-}
-
-.theme-bar{
-  margin-bottom:13px;
 }
 </style>

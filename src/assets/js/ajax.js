@@ -166,6 +166,14 @@ export const commentapi = (id, type, text) => {
     }
   });
 }
-
+// 提案
+export const question = (portal_id, type, title, text) => {
+  return $.ajax({
+    url: '/home/question/question',
+    data: {
+      portal_id, type, title, text
+    }
+  })
+}
 
 
