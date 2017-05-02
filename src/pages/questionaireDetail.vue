@@ -268,16 +268,27 @@ export default {
 .page1-leave{
   transform: translate(0, 0);
 }
+
+
 .page2-enter-active {
   transform: translate(0, 0);
 }
 .page2-enter{
   transform: translate(0, 667px);
 }
+
 .page2-leave-active {
   transform: translate(0, 667px);
 }
 .page2-leave{
   transform: translate(0, 0);
 }
+
 </style>
+
+
+
+
+
+
+
