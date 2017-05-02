@@ -1,13 +1,15 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-      <mt-loadmore v-show="!isQuestionaireShown"
-        :top-method="refresh"
-        :bottom-method="loadBottom"
-        :bottomDistance="bottomDistance"
-        ref="loadmore"
-      >
-        <x-img class="top-pic" :src="topPic"></x-img>
+    <transition name="page1">
+      <div v-show="!isQuestionaireShown" class="page1 full-page-box">
+        <mt-loadmore
+          :top-method="refresh"
+          :bottom-method="loadBottom"
+          :bottomDistance="bottomDistance"
+          ref="loadmore"
+        >
+          <x-img class="top-pic" :src="topPic"></x-img>
           <cell class="questionaire-title" :title="detail.title" :border-intent="false">
           </cell>
           <cell :border-intent="false">
@@ -35,9 +37,11 @@
               </p>
             </span>
           </cell>
-      </mt-loadmore>
-    <transition name="slide-fade">
-      <div v-show="isQuestionaireShown" class='test'>
+        </mt-loadmore>
+      </div>
+    </transition>
+    <transition name="page2">
+      <div v-show="isQuestionaireShown" class='page2 full-page-box'>
         <mt-loadmore
          :top-method="loadTop"
          ref="loadmore2"
@@ -256,25 +260,44 @@ export default {
 }
 
 .weui-btn{
-  background-color: rgb(0n,132,255)!important;
+  background-color: rgb(0,132,255)!important;
   border-radius:0!important;
   position:fixed;
   z-index:100;
   bottom:0;
   left:0;
 }
-
-.slide-fade-enter-active {
-  transition: all 0.5s cubic-bezier(0,0,0.5,1);
+.page1,.page2{
+  position: absolute;
+  transition: all 500ms cubic-bezier(0,0,0.5,1);
+}
+.page1-enter-active{
   transform: translate(0, 0);
 }
-.slide-fade-enter {
-  transform: translate(0, 640px);
+.page1-enter{
+  transform: translate(0, -667px);
 }
-.test{
-  position: absolute;
-  top: 0;
+.page1-leave-active{
+  transform: translate(0, -667px);
 }
+.page1-leave{
+  transform: translate(0, 0);
+}
+
+
+.page2-enter-active {
+  transform: translate(0, 0);
+}
+.page2-enter{
+  transform: translate(0, 667px);
+}
+.page2-leave-active {
+  transform: translate(0, 667px);
+}
+.page2-leave{
+  transform: translate(0, 0);
+}
+
 </style>
 
 
