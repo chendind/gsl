@@ -22,7 +22,7 @@
           class="bg-white"
           :show-dots="Math.ceil(themes.length / (themeLayout.column * themeLayout.row))>1"
         >
-          <swiper-item v-for="n in Math.ceil(themes.length / (themeLayout.column * themeLayout.row))">
+          <swiper-item v-for="n in Math.ceil(themes.length / (themeLayout.column * themeLayout.row))" :key="n">
             <grid class="grid theme-bar bg-white no-before no-after" :rows="themeLayout.column">
               <grid-item
                 class="grid-item grid-item1 no-before no-after"

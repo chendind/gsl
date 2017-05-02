@@ -11,8 +11,8 @@
       :bottomDropText="displayText"
       :bottomLoadingText="displayText"
       ref="loadmore"
-    > 
-      <cell v-for="user in voteInfo" :border-intent="true">
+    >
+      <cell v-for="(user, $index) in voteInfo" :border-intent="true" :key="$index">
         <span slot="after-title" >
           <img  class="user-avatar" :src="user.avatar">
           {{user.user_name}}
