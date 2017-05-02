@@ -11,6 +11,7 @@
 </template>
 <script>
 import { Checklist } from 'vux'
+import { pushAnswers } from '@/assets/js/ajax.js'
 import $ from 'jquery'
 export default {
   name: 'questionaireChecklist',
@@ -21,6 +22,11 @@ export default {
     questionaire: {
       type: Array,
       default: [],
+      required: false,
+    },
+    submit: {
+      type: Boolean,
+      default: false,
       required: false,
     }
   },
@@ -36,38 +42,41 @@ export default {
     onChange:function (value){
       //文字跟随checkbox变色
       $(".weui-check:checked").parent().next().find("p").css({color:"#ff6735"});
-      $(".weui-check:not(:checked)").parent().next().find("p").css({color:"black"});
+      $(".weui-check:not(:checked)").parent().next().find("p").css({color:"black"});  
+    }
+  },
+  watch: {
+    submit: function() {
       // 将选项转译回choiceid
-      let answers = [];
-      let checklist = this.$data.checklist;
-      let questionaire = this.questionaire;
-      for(let question_id in checklist){
-        let rawAnswerArray = checklist[question_id];
-        let answer = {};
-        answer.question_id = question_id;
-        answer.choice_id = [];
-        console.log(checklist)
-        console.log(question_id)
-        console.log(rawAnswerArray)
-        // 遍历questionaire数组
-        questionaire.forEach(question => {
-          if(question.question_id == question_id){
-            let options = question.children;
-            for(let option in options){
-              for(rawAnswer in rawAnswerArray){
-                if(rawAnswer.slice(3) == question.text){ 
-                  answer.choice_id.push(option.id);
-                }
-              }
+      if(this.submit){
+        let answers = [];
+        let checklist = this.$data.checklist;
+        let questionaire = this.questionaire;
+        for(let question_id in checklist){
+          let rawAnswerArray = checklist[question_id];
+          let answer = {};
+          answer.question_id = parseInt(question_id);
+          answer.choice_id = [];
+          // 遍历questionaire数组
+          questionaire.forEach(question => {
+            if(question.question_id == question_id){
+              let options = question.children;
+              options.forEach(option => {
+                rawAnswerArray.forEach(rawAnswer => {
+                  if(rawAnswer.slice(3) == option.text){
+                    answer.choice_id.push(option.id);
+                  }
+                })
+              })
             }
-          }
+          })
+          answers.push(answer);
+        }
+        const questionaireId = localStorage.getItem('questionaireId');
+        pushAnswers(questionaireId,answers).done(msg => {
+          console.log(msg)
         })
-        answers.push(answer);
       }
-      this.$emit('completed',this.$data.checklist)
-    },
-    test:function(){
-      alert('hehe')
     }
   }
 }
@@ -112,8 +121,6 @@ export default {
   .weui-cell:before{
     left:0!important;
   }
-
-
 </style>
 
 

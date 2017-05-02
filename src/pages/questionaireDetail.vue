@@ -54,7 +54,7 @@
             </span>
           </cell>
           <div class="questionaire">
-            <questionaire-checklist @completed="feedback" :questionaire="questionaire"></questionaire-checklist>
+            <questionaire-checklist @completed="feedback" :questionaire="questionaire" :submit="isSubmitting"></questionaire-checklist>
           </div>
         </mt-loadmore>
         <x-button type="primary" @click.native="submit">确认提交</x-button>
@@ -65,7 +65,7 @@
 <script>
 import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton} from 'vux'
 import { Loadmore } from 'mint-ui';
-import { getArticle, getArticleVoteInfo, getVoteInfo, pushQuestionaire } from '@/assets/js/ajax.js'
+import { getArticle, getArticleVoteInfo, getVoteInfo } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
 import $ from 'jquery'
 export default {
@@ -85,6 +85,7 @@ export default {
       bottomDistance:150,
       topPic:require('@/assets/image/top_2.png'),
       iconPic:require('@/assets/image/time_new.png'),
+      isSubmitting:false
     }
   },
   methods: {
@@ -127,7 +128,6 @@ export default {
           this.$data.questionaire = temp;
         }
       });
-      // this.$refs.loadmore.onTopLoaded();foption
     },
     loadBottom(){
       this.$data.isQuestionaireShown=true;
@@ -151,12 +151,7 @@ export default {
       this.$data.answer = answer;
     },
     submit(){
-      console.log('hehe')
-      // 检测问卷是否填写完整
-      let answer = this.$data.answer;
-      pushQuestionaire(answer).done(msg=>{
-        console.log(msg)
-      })
+      this.$data.isSubmitting = true;
     }
   },
   created() {

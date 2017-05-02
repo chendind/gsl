@@ -177,11 +177,11 @@ export const question = (portal_id, type, title, text) => {
   })
 }
 //问卷提交
-export const pushQuestionaire = (questionaire) => {
+export const pushAnswers = (id,select) => {
   return $.ajax({
     url: '/home/vote/vote',
     data: {
-      questionaire
+      id,select
     }
   })
 }
