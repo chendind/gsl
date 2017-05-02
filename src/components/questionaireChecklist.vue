@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-for="question in questionaire">
+    <div v-for="(question,$index) in questionaire" :key="$index">
       <span class="label-bar"><span class="choices">{{question.is_single_choice?"单选":"多选"}}</span> {{question.text}}</span>
-      <div class="checklist-wrap">
+      <div class="checklist-wrap" @click="">
         <checklist class="checklist" :options="question.options" v-model="checklist[question.question_id]" :max="question.is_single_choice?1:0" @on-change="onChange">
         </checklist>
       </div>
@@ -37,7 +37,37 @@ export default {
       //文字跟随checkbox变色
       $(".weui-check:checked").parent().next().find("p").css({color:"#ff6735"});
       $(".weui-check:not(:checked)").parent().next().find("p").css({color:"black"});
-      console.log(this.$data.checklist)
+      // 将选项转译回choiceid
+      let answers = [];
+      let checklist = this.$data.checklist;
+      let questionaire = this.questionaire;
+      for(let question_id in checklist){
+        let rawAnswerArray = checklist[question_id];
+        let answer = {};
+        answer.question_id = question_id;
+        answer.choice_id = [];
+        console.log(checklist)
+        console.log(question_id)
+        console.log(rawAnswerArray)
+        // 遍历questionaire数组
+        questionaire.forEach(question => {
+          if(question.question_id == question_id){
+            let options = question.children;
+            for(let option in options){
+              for(rawAnswer in rawAnswerArray){
+                if(rawAnswer.slice(3) == question.text){ 
+                  answer.choice_id.push(option.id);
+                }
+              }
+            }
+          }
+        })
+        answers.push(answer);
+      }
+      this.$emit('completed',this.$data.checklist)
+    },
+    test:function(){
+      alert('hehe')
     }
   }
 }

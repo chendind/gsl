@@ -1,17 +1,11 @@
 <!-- 教育培训 -->
 <template>
   <div>
-    <scroller
-      :use-pullup="true"
-      :use-pulldown="true"
-      height="100vh"
-      :pulldown-config="pulldownConfig"
-      :pullup-config="pullupConfig"
-      :lock-x="true"
-      ref="scroller"
-      @on-pulldown-loading="onPulldownLoading"
-      @on-pullup-loading="onPullupLoading"
-    >
+    <mt-loadmore class="scroller"
+      :top-method="loadTop"
+      :bottom-method="loadBottom"
+      ref="loadmore"
+    > 
       <div>
         <x-img class="top-pic" :src="topPic"></x-img>
         <grid class="grid theme-bar bg-white" :rows="5">
@@ -23,49 +17,33 @@
         <article-list class="mv10" :articles="articles">
         </article-list>
       </div>
-    </scroller>
+    </mt-loadmore>
   </div>
 </template>
 <script>
-import { Scroller, XImg, Grid, GridItem} from 'vux'
+import { XImg, Grid, GridItem} from 'vux'
+import { Loadmore } from 'mint-ui';
 import articleList from '@/components/articleList.vue'
 import $ from 'jquery'
 import { getMainData, getThemeTag } from '@/assets/js/ajax.js'
 export default {
   name: 'education',
   components: {
-    Scroller, XImg, Grid, GridItem,
-    articleList
+    XImg, Grid, GridItem,
+    articleList,
+    mtLoadmore: Loadmore
   },
   data() {
     return {
+      themeId:147,
       themeTags:[],
       articles: [],
-      pulldownConfig: {
-        content: 'Pull Down To Refresh',
-        height: 60,
-        autoRefresh: false,
-        downContent: '下拉刷新',
-        upContent: '释放自动刷新',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pulldown-'
-      },
-      pullupConfig: {
-        content: 'Pull Up To Refresh',
-        pullUpHeight: 60,
-        height: 40,
-        autoRefresh: false,
-        downContent: '上拉加载更多',
-        upContent: '释放自动加载',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pullup-'
-      },
       topPic:require('@/assets/image/top_1.png')
     }
   },
   methods: {
-    onPulldownLoading(){
-      const themeId = localStorage.getItem('themeId');
+    loadTop(){
+      const themeId = this.$data.themeId;
       getThemeTag(themeId).done((data) => {
         if (data.state == 0) {
           this.$data.themeTags = data.order;
@@ -74,12 +52,13 @@ export default {
       getMainData(1, themeId).done((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
-          this.$refs.scroller.donePulldown();
-          this.$refs.scroller.enablePullup();
+
         }
-      })
+      });
+      this.$refs.loadmore.onTopLoaded();
+
     },
-    onPullupLoading(){
+    loadBottom(){
       const factionId = localStorage.getItem('factionId');
       const page = Math.floor(this.$data.articles.length / 10) + 1;
       getMainData(page, factionId).done((data) => {
@@ -88,25 +67,23 @@ export default {
             ...this.$data.articles,
             ...data.order,
           ];
-          this.$refs.scroller.donePullup();
-          if (data.order.length < 10) {
-            this.$refs.scroller.disablePullup();
-          }
+          // this.$refs.scroller.donePullup();
+          // if (data.order.length < 10) {
+          //   this.$refs.scroller.disablePullup();
+          // }
         } else {
-          this.$refs.scroller.disablePullup();
+          // this.$refs.scroller.disablePullup();
         }
       })
-    },
-    setItem(a,b){
-      localStorage.setItem(a,b);
+      this.$refs.loadmore.onBottomLoaded();
     }
   },
   mounted() {
-    this.onPulldownLoading();
+    this.loadTop();
   },
-  updated() {
-    this.$refs.scroller.reset();
-  }
+  // updated() {
+  //   this.$refs.scroller.reset();
+  // }
 }
 </script>
 <style lang='less' scoped>

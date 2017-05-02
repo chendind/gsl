@@ -175,5 +175,16 @@ export const question = (portal_id, type, title, text) => {
     }
   })
 }
+//问卷提交
+export const pushQuestionaire = (questionaire) => {
+  return $.ajax({
+    url: '/home/vote/vote',
+    data: {
+      questionaire
+    }
+  })
+}
+
+   
 
 

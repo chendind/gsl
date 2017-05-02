@@ -1,65 +1,69 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-    <mt-loadmore v-if="isQuestionaireShown"
-      :top-method="refresh"
-      :bottom-method="loadBottom"
-      :bottomDistance="bottomDistance"
-      ref="loadmore"
-    >
-      <x-img class="top-pic" :src="topPic"></x-img>
-        <cell class="questionaire-title" :title="detail.title" :border-intent="false">
-        </cell>
-        <cell :border-intent="false">
-          <span slot="after-title">
-            <img src="iconPic">
-            <span class="release-date">
-              {{detail.in_time | time1}}
-            </span>
-          </span>
-        </cell>
-        <cell :border-intent="false">
-          <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
-            <div class="user-info">
-              已报名<span class="vote-count">{{voteInfo.length}}</span>人
-              <p class='avatar-list'>
-                <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
-              </p>
-            </div>
-          </span>
-        </cell>
-        <cell :border-intent="false">
-          <span slot="after-title">
-            <p v-for="item in detail.text">
-                {{item}}
-            </p>
-          </span>
-        </cell>
-      </mt-loadmore>
-    <div v-else>
-      <mt-loadmore
-       :top-method="loadTop"
-       ref="loadmore2" 
+    <transition name="slide-fade">
+      <mt-loadmore v-show="!isQuestionaireShown"
+        :top-method="refresh"
+        :bottom-method="loadBottom"
+        :bottomDistance="bottomDistance"
+        ref="loadmore"
       >
-        <cell :border-intent="false">
-          <span slot="after-title">
-            <p v-for="item in detail.text">
-                {{item}}
-            </p>
-          </span>
-        </cell>
-        <div class="questionaire">
-          <questionaire-checklist :questionaire="questionaire"></questionaire-checklist>
-        </div>
+        <x-img class="top-pic" :src="topPic"></x-img>
+          <cell class="questionaire-title" :title="detail.title" :border-intent="false">
+          </cell>
+          <cell :border-intent="false">
+            <span slot="after-title">
+              <img src="iconPic">
+              <span class="release-date">
+                {{detail.in_time | time1}}
+              </span>
+            </span>
+          </cell>
+          <cell :border-intent="false">
+            <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
+              <div class="user-info">
+                已报名<span class="vote-count">{{voteInfo.length}}</span>人
+                <p class='avatar-list'>
+                  <img v-for="user in voteInfo" class="user-avatar" :src="user.avatar">
+                </p>
+              </div>
+            </span>
+          </cell>
+          <cell :border-intent="false">
+            <span slot="after-title">
+              <p v-for="item in detail.text">
+                  {{item}}
+              </p>
+            </span>
+          </cell>
       </mt-loadmore>
-      <x-button type="primary">确认提交</x-button>
-    </div>
+    </transition>
+    <transition name="slide-fade">
+      <div v-show="isQuestionaireShown" class='test'>
+        <mt-loadmore
+         :top-method="loadTop"
+         ref="loadmore2" 
+        >
+          <cell :border-intent="false">
+            <span slot="after-title">
+              <p v-for="item in detail.text">
+                  {{item}}
+              </p>
+            </span>
+          </cell>
+          <div class="questionaire">
+            <questionaire-checklist @completed="feedback" :questionaire="questionaire"></questionaire-checklist>
+          </div>
+        </mt-loadmore>
+        <x-button type="primary" @click.native="submit">确认提交</x-button>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
 import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton} from 'vux'
 import { Loadmore } from 'mint-ui';
-import { getArticle, getArticleVoteInfo, getVoteInfo } from '@/assets/js/ajax.js'
+import { getArticle, getArticleVoteInfo, getVoteInfo, pushQuestionaire } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
 import $ from 'jquery'
 export default {
@@ -74,6 +78,7 @@ export default {
       detail: [],
       voteInfo:[],
       questionaire:[],
+      answer:[],
       isQuestionaireShown:false,
       bottomDistance:150,
       topPic:require('@/assets/image/top_2.png'),
@@ -109,7 +114,12 @@ export default {
             children.forEach((option,key) => {
               options.push(this.convert(key)+"  "+option.text);
             })
+            let ids = [];
+            children.forEach((option,key) => {
+              ids.push(option.id);
+            })
             question.options = options;
+            question.ids = ids;
             temp.push(question);
           }
           this.$data.questionaire = temp;
@@ -133,6 +143,18 @@ export default {
       num++;
       return num <= 26 ? 
            String.fromCharCode(num + 64) : convert(~~((num - 1) / 26)) + convert(num % 26 || 26);
+    },
+    // 回传问卷答案
+    feedback(answer){
+      this.$data.answer = answer;
+    },
+    submit(){
+      console.log('hehe')
+      // 检测问卷是否填写完整
+      let answer = this.$data.answer;
+      pushQuestionaire(answer).done(msg=>{
+        console.log(msg)
+      })
     }
   },
   created() {
@@ -242,5 +264,25 @@ export default {
   z-index:100;
   bottom:0;
   left:0;
+}
+
+.slide-fade-enter-active {
+  -webkit-transition-property: all;   
+  -webkit-transition-duration: 1.5s;   
+  -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
+  
+}
+/*.slide-fade-le-active {
+  -webkit-transition-property: all;   
+  -webkit-transition-duration: 0.8s;   
+  -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
+}*/
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translate(0, 0);
+}
+.test{
+  position: absolute;
+  top: 0;
+  transform: translate(0, 640px);
 }
 </style>
