@@ -19,7 +19,7 @@
           <tab-item @on-item-click="onItemClick">历史问卷</tab-item>
         </tab>
         <!-- 历史问卷 -->
-        <div v-if="numb === 1">
+        <div v-if="tabIndex === 1">
           <questionaire-list :questionaires="questionaires | outdated"></questionaire-list>
         </div>
         <!-- 最新问卷 -->
@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      numb:0,
+      tabIndex:0,
       themeTags:[],
       questionaires: [],
       pulldownConfig: {
@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     onItemClick:function (n) {
-      this.numb = n
+      this.tabIndex = n
     },
     onPulldownLoading(){
       const themeId = localStorage.getItem('themeId');

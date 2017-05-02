@@ -4,6 +4,7 @@
     <mt-loadmore class="scroller"
       :top-method="loadTop"
       :bottom-method="loadBottom"
+      :bottom-all-loaded="allLoaded"
       ref="loadmore"
     > 
       <div>
@@ -14,7 +15,7 @@
             <span slot="label" class="grid-item-label">{{themeTag.name}}</span>
           </grid-item>
         </grid>
-        <article-list class="mv10" :articles="articles">
+        <article-list  :articles="articles">
         </article-list>
       </div>
     </mt-loadmore>
@@ -38,6 +39,7 @@ export default {
       themeId:147,
       themeTags:[],
       articles: [],
+      allLoaded:false,
       topPic:require('@/assets/image/top_1.png')
     }
   },
@@ -58,23 +60,23 @@ export default {
 
     },
     loadBottom(){
-      const factionId = localStorage.getItem('factionId');
+      const themeId = this.$data.themeId;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, factionId).done((data) => {
-        if (data.order.length > 0) {
+      getMainData(page, themeId).done((data) => {
+        let pendingLength = data.order.length;
+        if (pendingLength > 0) {
           this.$data.articles = [
             ...this.$data.articles,
             ...data.order,
           ];
-          // this.$refs.scroller.donePullup();
-          // if (data.order.length < 10) {
-          //   this.$refs.scroller.disablePullup();
-          // }
-        } else {
-          // this.$refs.scroller.disablePullup();
+          this.$refs.loadmore.onBottomLoaded();
+        }else{
+          this.$data.allLoaded = true;
+        }
+        if(pendingLength < 10) {
+          this.$data.allLoaded = true;
         }
       })
-      this.$refs.loadmore.onBottomLoaded();
     }
   },
   mounted() {

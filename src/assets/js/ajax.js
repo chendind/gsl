@@ -185,6 +185,15 @@ export const pushAnswers = (id,select) => {
     }
   })
 }
+export const getTagArticle = (tag_id) => {
+  return $.ajax({
+    url: '/home/article/lists',
+    type:'post',
+    data: {
+      tag_id
+    }
+  })
+}
 
    
 
