@@ -52,7 +52,6 @@ export default {
       getMainData(1, themeId).done((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
-
         }
       });
       this.$refs.loadmore.onTopLoaded();

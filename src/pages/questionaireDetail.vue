@@ -231,25 +231,6 @@ export default {
   font-size:20px;
 }
 
-#questionaireDetail,#questionaire{
-      /*  Safari,Chrome*/  
-    -webkit-transition-property: all;   
-    -webkit-transition-duration: 10s;   
-    -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1);   
-    /*  Firefox*/  
-    -moz-transition-property: all;   
-    -moz-transition-duration: 3.5s;   
-    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
-    /*  Opera*/  
-    -o-transition-property: all;   
-    -o-transition-duration: .5s;   
-    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
-    /*  IE9*/  
-    -ms-transition-property: all;   
-    -ms-transition-duration: .5s;   
-    -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1); 
-}
-
 .questionaire{
   margin-top: 11px;
   margin-bottom: 44px;
@@ -272,11 +253,7 @@ export default {
   -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
   
 }
-/*.slide-fade-le-active {
-  -webkit-transition-property: all;   
-  -webkit-transition-duration: 0.8s;   
-  -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
-}*/
+
 .slide-fade-enter, .slide-fade-leave-to {
   transform: translate(0, 0);
 }
