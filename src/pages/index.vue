@@ -138,7 +138,7 @@ export default {
           this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
             return item.id;
           });
-          localStorage.setItem('articleThemes', this.$data.articleThemes);
+          localStorage.setItem('themeIds', JSON.stringify(this.$data.articleThemes));
           this.getNewestMainData();
         }
         if (data2[0].state == 0) {
@@ -235,8 +235,6 @@ export default {
     }
   },
   mounted() {
-    console.log(`userType: ${localStorage.getItem('userType')}`)
-    console.log(`userId: ${localStorage.getItem('userId')}`)
     this.allRefresh();
     if (this.$data.portalLists.length > 1) {
       Bridge.addMobileWindowButton('切换',() => {
@@ -278,7 +276,7 @@ export default {
   line-height: 1;
 }
 .portalListsBox{
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

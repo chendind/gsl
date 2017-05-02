@@ -8,17 +8,17 @@
       ref="loadmore"
     >
       <grid class="grid theme-bar bg-white" :rows="5">
-        <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle')">
+        <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow(themeTag.url || 'tagArticle')">
           <img slot="icon" class="grid-item-icon" :src="themeTag.photo">
           <span slot="label" class="grid-item-label size12">{{themeTag.name}}</span>
         </grid-item>
       </grid>
-      <div>
-        <div class="article-style-1" v-for="article in articles">
-          <img :src="article.photo">
-          <div>
-            <div>{{article.title}}</div>
-            <div>{{article.in_time | time2}}</div>
+      <div class="mv10">
+        <div class="article-style-1" v-for="article in articles" @click="goArticle(article)">
+          <div class="cover" :style="{'background-image': `url(${article.photo || require('@/assets/image/hs.jpg')})`}"></div>
+          <div class="meta color-white pd10">
+            <div class="ellipsis size14">{{article.title}}</div>
+            <div class="size12">{{article.in_time | time2}}</div>
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      themeId: 0,
+      themeId: 149,
       themeTags:[],
       articles: [],
       allLoaded: false,
@@ -49,10 +49,20 @@ export default {
       const themeId = this.$data.themeId;
       getThemeTag(themeId).done((data) => {
         if (data.state == 0) {
-          this.$data.themeTags = data.order;
+          this.$data.themeTags = data.order.map((item) => {
+            const tag = {...item}
+            if (item.id == 561) {
+              tag.url = 'http://wish.app.yunzz.com:8008/hs-table/page/hs-table-1.html';
+            } else if (item.id == 562) {
+              tag.url = 'http://wish.app.yunzz.com:8008/hs-table/page/hs-table-2.html';
+            } else if (item.id == 563) {
+              tag.url = 'http://wish.app.yunzz.com:8008/hs-table/page/hs-table-3.html';
+            }
+            return tag;
+          });
         }
       });
-      getMainData(1, themeId).done((data) => {
+      getMainData(1, themeId, 1).done((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
           this.$refs.loadmore.onTopLoaded();
@@ -63,9 +73,9 @@ export default {
     },
     onPullupLoading(){
       this.$root.disabledLink = true;
-      const factionId = localStorage.getItem('factionId');
+      const themeId = this.$data.themeId;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, factionId).done((data) => {
+      getMainData(page, themeId, 1).done((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,
@@ -81,9 +91,10 @@ export default {
         this.$root.disabledLink = false;
       })
     },
-  },
-  created() {
-    this.$data.themeId = 149;
+    goArticle(article) {
+      const query = this.$root.encodeObj({id: article.id})
+      this.$root.openMobileWindow(`article?${query}`)
+    }
   },
   mounted() {
     this.onPulldownLoading();
@@ -93,5 +104,21 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-
+.article-style-1{
+  position:relative;
+  .cover{
+    display: block;
+    width: 100%;
+    height: 46vw;
+    background-position: center;
+    background-size: cover;
+  }
+  .meta{
+    position: absolute;
+    background-color: rgba(0,0,0,0.4);
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
 </style>
