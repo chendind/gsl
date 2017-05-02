@@ -1,7 +1,6 @@
 <!-- 问卷详情 -->
 <template>
   <div>
-    <transition name="slide-fade">
       <mt-loadmore v-show="!isQuestionaireShown"
         :top-method="refresh"
         :bottom-method="loadBottom"
@@ -37,12 +36,11 @@
             </span>
           </cell>
       </mt-loadmore>
-    </transition>
     <transition name="slide-fade">
       <div v-show="isQuestionaireShown" class='test'>
         <mt-loadmore
          :top-method="loadTop"
-         ref="loadmore2" 
+         ref="loadmore2"
         >
           <cell :border-intent="false">
             <span slot="after-title">
@@ -132,7 +130,7 @@ export default {
       this.$refs.loadmore.onBottomLoaded();
       setTimeout(function(){ //滚动条位置temp fix
         document.body.scrollTop="0";
-      },200) 
+      },200)
     },
     loadTop(){
       this.$data.isQuestionaireShown=false;
@@ -141,7 +139,7 @@ export default {
     // 数字转字母
     convert(num){
       num++;
-      return num <= 26 ? 
+      return num <= 26 ?
            String.fromCharCode(num + 64) : convert(~~((num - 1) / 26)) + convert(num % 26 || 26);
     },
     // 回传问卷答案
@@ -232,22 +230,22 @@ export default {
 }
 
 #questionaireDetail,#questionaire{
-      /*  Safari,Chrome*/  
-    -webkit-transition-property: all;   
-    -webkit-transition-duration: 10s;   
-    -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1);   
-    /*  Firefox*/  
-    -moz-transition-property: all;   
-    -moz-transition-duration: 3.5s;   
-    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
-    /*  Opera*/  
-    -o-transition-property: all;   
-    -o-transition-duration: .5s;   
-    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);   
-    /*  IE9*/  
-    -ms-transition-property: all;   
-    -ms-transition-duration: .5s;   
-    -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1); 
+      /*  Safari,Chrome*/
+    -webkit-transition-property: all;
+    -webkit-transition-duration: 10s;
+    -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1);
+    /*  Firefox*/
+    -moz-transition-property: all;
+    -moz-transition-duration: 3.5s;
+    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    /*  Opera*/
+    -o-transition-property: all;
+    -o-transition-duration: .5s;
+    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    /*  IE9*/
+    -ms-transition-property: all;
+    -ms-transition-duration: .5s;
+    -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
 
 .questionaire{
@@ -267,22 +265,26 @@ export default {
 }
 
 .slide-fade-enter-active {
-  -webkit-transition-property: all;   
-  -webkit-transition-duration: 1.5s;   
-  -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
-  
-}
-/*.slide-fade-le-active {
-  -webkit-transition-property: all;   
-  -webkit-transition-duration: 0.8s;   
-  -webkit-transition-timing-function: cubic-bezier(0,0,0.5,1); 
-}*/
-.slide-fade-enter, .slide-fade-leave-to {
+  transition: all 0.5s cubic-bezier(0,0,0.5,1);
   transform: translate(0, 0);
+}
+.slide-fade-enter {
+  transform: translate(0, 640px);
 }
 .test{
   position: absolute;
   top: 0;
-  transform: translate(0, 640px);
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
