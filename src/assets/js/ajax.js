@@ -38,31 +38,31 @@ export const getPortalLists = () => {
     url:'/home/show/PortalLists'
   });
 }
-export const getPortalArticle = (factionId) => {
+export const getPortalArticle = (portalId) => {
   return $.ajax({
     url:'/home/show/PortalArticle',
     data: {
-      id: factionId,
+      id: portalId,
     }
   });
 }
-export const getPortalCarousel = (factionId) => {
+export const getPortalCarousel = (portalId) => {
   return $.ajax({
     url:'/index.php/home/show/PortalCarousel',
     data: {
-      id: factionId,
+      id: portalId,
     }
   });
 }
-export const getPortalTheme = (factionId) => {
+export const getPortalTheme = (portalId) => {
   return $.ajax({
     url:'/index.php/home/show/PortalTheme',
     data: {
-      id: factionId,
+      id: portalId,
     }
   });
 }
-export const getMainData = (page = 1, themes) => {
+export const getMainData = (page = 1, themes, key, isthemeclick, isquestionarticle, isopen, isend) => {
   return $.ajax({
     url:'/home/article/lists',
     data: {
@@ -70,10 +70,11 @@ export const getMainData = (page = 1, themes) => {
       page,
       number: 10,
       isthemeclick: 1,
+      key, isthemeclick, isquestionarticle, isopen, isend
     }
   });
 }
-export const getUnreadList = (page = 1, factionId) => {
+export const getUnreadList = (page = 1, portalId) => {
   return $.ajax({
     url: '/home/article/lists',
     type: 'post',
@@ -81,7 +82,7 @@ export const getUnreadList = (page = 1, factionId) => {
       page: page,
       number: 10,
       isopen: 2,
-      portal_id: factionId,
+      portal_id: portalId,
     }
   });
 }

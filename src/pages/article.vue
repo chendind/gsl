@@ -22,7 +22,7 @@
     </div>
     <div v-if="fn === 2" class="full-page-box bg-black color-white">
       <swiper :show-dots="false" height="100vh">
-        <swiper-item class="swiper-item-box" v-for="(photo, $index) in photo_photo">
+        <swiper-item class="swiper-item-box" v-for="(photo, $index) in photo_photo" :key="$index">
           <div class="text-center pd15">{{$index+1}}/{{photo_photo.length}}</div>
           <div class="image-box">
             <img :src="photo.photo">

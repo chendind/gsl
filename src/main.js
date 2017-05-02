@@ -131,3 +131,24 @@ function getFormatTime(value) {
     y, m, d, h, i, s
   };
 }
+
+
+
+
+
+
+
+
+
+
+/* 定义在localStorage中的变量列表
+userId - 用户id
+portalLists - 门户数组
+portalId - 目前的门户id（用户可切换）
+userType - 用户类型: tourist, user
+themeIds - 栏目id数组。有些api需要传入这个数组
+*/
+
+
+
+
