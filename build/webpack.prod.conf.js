@@ -8,7 +8,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-
+var Manifest= require('webpack-manifest');
+var ManifestPlugin = require('webpack-manifest-plugin');
 var env = config.build.env
 
 var webpackConfig = merge(baseWebpackConfig, {
@@ -62,6 +63,17 @@ var webpackConfig = merge(baseWebpackConfig, {
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
+    }),
+    // new ManifestPlugin(),
+    new Manifest({
+      cache: [],
+      timestamp: true,
+      filename:'cache.manifest',
+      network: [
+        '*',
+      ],
+      headcomment: 'gsl',
+      master: ['/index.html']
     }),
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
