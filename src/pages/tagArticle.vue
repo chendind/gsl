@@ -1,25 +1,21 @@
 <!-- 标签文章 -->
 <template>
   <div>
-    <scroller
-      :use-pullup="true"
-      :use-pulldown="true"
-      height="100vh"
-      :pulldown-config="pulldownConfig"
-      :pullup-config="pullupConfig"
-      :lock-x="true"
-      ref="scroller"
-      @on-pulldown-loading="onPulldownLoading"
-      @on-pullup-loading="onPullupLoading"
+    <mt-loadmore
+      :top-method="onPulldownLoading"
+      :bottom-method="onPullupLoading"
+      :bottom-all-loaded="allLoaded"
+      ref="loadmore"
     >
-      <article-list :articles="articles"></article-list>
-    </scroller>
+      <article-list :articles="articles" style="min-height: 100vh"></article-list>
+    </mt-loadmore>
   </div>
 </template>
 <script>
 import { Scroller, Flexbox, FlexboxItem } from 'vux'
+import { Loadmore } from 'mint-ui';
 import articleList from '@/components/articleList.vue'
-import { getUnreadList } from '@/assets/js/ajax.js'
+import { getTagArticle } from '@/assets/js/ajax.js'
 export default {
   name: 'tagArticle',
   components: {
@@ -27,63 +23,55 @@ export default {
   },
   data() {
     return {
+      tagId: 0,
       articles: [],
-      pulldownConfig: {
-        content: 'Pull Down To Refresh',
-        height: 60,
-        autoRefresh: false,
-        downContent: '下拉刷新',
-        upContent: '释放自动刷新',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pulldown-'
-      },
-      pullupConfig: {
-        content: 'Pull Up To Refresh',
-        pullUpHeight: 60,
-        height: 40,
-        autoRefresh: false,
-        downContent: '上拉加载更多',
-        upContent: '释放自动加载',
-        loadingContent: '<i class="fa fa-fw fa-spinner fa-spin"></i>正在刷新...',
-        clsPrefix: 'xs-plugin-pullup-'
-      },
+      allLoaded: false,
     }
   },
   methods: {
     onPulldownLoading(){
-      const factionId = localStorage.getItem('factionId');
-      getUnreadList(1, factionId).done((data) => {
+      const tagId = this.$data.tagId;
+      const portalId = localStorage.getItem('portalId');
+      this.$root.disabledLink = true;
+      getTagArticle(1, tagId, portalId).then((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
-          this.$refs.scroller.donePulldown();
-          this.$refs.scroller.enablePullup();
+          this.$data.allLoaded = false;
+          if (data.order.length < 10) {
+            this.$data.allLoaded = true;
+          }
         }
+        this.$refs.loadmore.onTopLoaded();
+        this.$root.disabledLink = false;
       })
     },
     onPullupLoading(){
-      const factionId = localStorage.getItem('factionId');
+      const tagId = this.$data.tagId;
+      const portalId = localStorage.getItem('portalId');
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getUnreadList(page, factionId).done((data) => {
+      this.$root.disabledLink = true;
+      getTagArticle(page, tagId, portalId).then((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,
             ...data.order,
           ];
-          this.$refs.scroller.donePullup();
+
           if (data.order.length < 10) {
-            this.$refs.scroller.disablePullup();
+            this.$data.allLoaded = true;
           }
         } else {
-          this.$refs.scroller.disablePullup();
+          this.$data.allLoaded = true;
         }
+        this.$refs.loadmore.onBottomLoaded();
+        this.$root.disabledLink = false;
       })
     }
   },
   mounted() {
-    this.onPulldownLoading()
-  },
-  updated() {
-    this.$refs.scroller.reset();
+    const query = this.$root.getQueryData() || {};
+    this.$data.tagId = query.tagId || 0;
+    this.onPullupLoading()
   }
 }
 </script>

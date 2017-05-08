@@ -66,12 +66,14 @@ var webpackConfig = merge(baseWebpackConfig, {
     }),
     // new ManifestPlugin(),
     new Manifest({
-      cache: [],
+      cache: [
+        'static/source/font-awesome-4.7.0/css/font-awesome.min.css',
+        'http://hs-server.780.cn/apps/api.js',
+        'index.html'
+      ],
       timestamp: true,
       filename:'cache.manifest',
-      network: [
-        '*',
-      ],
+      network: ['*'],
       headcomment: 'gsl',
       master: ['/index.html']
     }),

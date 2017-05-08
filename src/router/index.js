@@ -122,6 +122,13 @@ export default new Router({
       }
     },
     {
+      path: '/mutualAidInfo',
+      name: 'mutualAidInfo',
+      component(r){
+        r(require('@/pages/mutualAidInfo'));
+      }
+    },
+    {
       path: '/advice',
       name: 'advice',
       component(r){

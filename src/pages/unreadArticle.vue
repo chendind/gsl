@@ -6,8 +6,9 @@
       :bottom-method="onPullupLoading"
       :bottom-all-loaded="allLoaded"
       ref="loadmore"
+      class="full-page-box"
     >
-      <article-list :articles="articles"></article-list>
+      <article-list :articles="articles" style="min-height: 100vh"></article-list>
     </mt-loadmore>
   </div>
 </template>
@@ -31,42 +32,45 @@ export default {
   methods: {
     onPulldownLoading(){
       this.$root.disabledLink = true;
-      const factionId = localStorage.getItem('factionId');
-      getUnreadList(1, factionId).done((data) => {
+      const portalId = localStorage.getItem('portalId');
+      getUnreadList(1, portalId).then((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
-          this.$refs.loadmore.onTopLoaded();
           this.$data.allLoaded = false;
           if (data.order.length < 10) {
             this.$data.allLoaded = true;
           }
         }
+        this.$refs.loadmore.onTopLoaded();
         this.$root.disabledLink = false;
       })
     },
     onPullupLoading(){
       this.$root.disabledLink = true;
-      const factionId = localStorage.getItem('factionId');
+      const portalId = localStorage.getItem('portalId');
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getUnreadList(page, factionId).done((data) => {
+      getUnreadList(page, portalId).then((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,
             ...data.order,
           ];
-          this.$refs.loadmore.onBottomLoaded();
           if (data.order.length < 10) {
             this.$data.allLoaded = true;
           }
         } else {
           this.$data.allLoaded = true;
         }
+        this.$refs.loadmore.onBottomLoaded();
         this.$root.disabledLink = false;
       })
     }
   },
   mounted() {
-    this.onPulldownLoading()
+    this.onPullupLoading();
+    Bridge.customGoBack(function(){
+        Bridge.closeMobileWindow();
+    },'');
   },
   updated() {
   }

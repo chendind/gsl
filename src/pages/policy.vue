@@ -6,11 +6,11 @@
       :bottom-method="loadBottom"
       :bottom-all-loaded="allLoaded"
       ref="loadmore"
-    > 
+    >
       <div>
-        <x-img class="top-pic" :src="topPic"></x-img>
+        <x-img class="top-pic" :src="require('@/assets/image/zcBanner.png')"></x-img>
         <grid class="grid theme-bar bg-white" :rows="5">
-          <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="$root.openMobileWindow('tagArticle')">
+          <grid-item class="grid-item grid-item1" v-for="(themeTag, $index) in themeTags" :key="$index" @on-item-click="goTagArticle(themeTag)">
             <img slot="icon" class="grid-item-icon" :src="themeTag.photo">
             <span slot="label" class="grid-item-label">{{themeTag.name}}</span>
           </grid-item>
@@ -28,7 +28,7 @@ import articleList from '@/components/articleList.vue'
 import $ from 'jquery'
 import { getMainData, getThemeTag } from '@/assets/js/ajax.js'
 export default {
-  name: 'education',
+  name: 'policy',
   components: {
     XImg, Grid, GridItem,
     articleList,
@@ -40,29 +40,34 @@ export default {
       themeTags:[],
       articles: [],
       allLoaded:false,
-      topPic:require('@/assets/image/zcBanner.png')
     }
   },
   methods: {
     loadTop(){
       const themeId = this.$data.themeId;
-      getThemeTag(themeId).done((data) => {
+      this.$root.disabledLink = true;
+      getThemeTag(themeId).then((data) => {
         if (data.state == 0) {
           this.$data.themeTags = data.order;
         }
       });
-      getMainData(1, themeId).done((data) => {
+      getMainData(1, themeId).then((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
+          this.$data.allLoaded = false;
+          if (data.order.length < 10) {
+            this.$data.allLoaded = true;
+          }
         }
+        this.$root.disabledLink = false;
+        this.$refs.loadmore.onTopLoaded();
       });
-      this.$refs.loadmore.onTopLoaded();
-
     },
     loadBottom(){
       const themeId = this.$data.themeId;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, themeId).done((data) => {
+      this.$root.disabledLink = true;
+      getMainData(page, themeId).then((data) => {
         let pendingLength = data.order.length;
         if (pendingLength > 0) {
           this.$data.articles = [
@@ -76,7 +81,14 @@ export default {
         if(pendingLength < 10) {
           this.$data.allLoaded = true;
         }
+        this.$root.disabledLink = false;
       })
+    },
+    goTagArticle(themeTag){
+      const query = this.$root.encodeObj({
+        tagId: themeTag.id
+      });
+      this.$root.openMobileWindow(`tagArticle?${query}`, themeTag.name);
     }
   },
   mounted() {
@@ -88,13 +100,5 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-.xs-container{
-  min-height: 100vh;
-}
 
-.top-pic{
-  display: block;
-  width: 100%;
-  height:50vw;
-}
 </style>

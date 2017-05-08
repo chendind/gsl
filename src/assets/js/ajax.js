@@ -8,193 +8,177 @@ $.ajaxSetup({
     }
   }
 });
+const sendAjax = (url, payload, params = {}) => {
+  const query = $.param(payload || '')
+  if (navigator.onLine) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        ...params,
+        url,
+        data: {
+          ...payload,
+        },
+        success(data){
+          if(data.state == 0 || data.state === undefined){
+            localStorage.setItem(`${url}?${query}`, JSON.stringify(data));
+          }
+          resolve(data);
+        },
+        error(data){
+          reject(data);
+        }
+      })
+    })
+  } else {
+    const cache = localStorage.getItem(`${url}?${query}`);
+    return $.Deferred().resolve(JSON.parse(cache));
+  }
+}
 export const getUserData = (open_id) => {
-  return $.ajax({
-    url: '/home/index/userdata',
-    timeout:10000,
-    data: {
-      open_id,
-    }
-  });
+  console.log(open_id)
+  return sendAjax('/home/index/userdata', {open_id});
 }
 export const getSubscription = (user_id) => {
   // 用户是否关注了该公众号
-  return $.ajax({
-    url: "/home/user/get_subscriptions",
-    data: {
-      "id":user_id,
-    },
-  });
+  return sendAjax("/home/user/get_subscriptions", { "id":user_id });
 }
 export const getPublicPortal = () => {
-  return $.ajax({
-    url: "/home/show/PublicPortal",
-    data: {
-    },
-  });
+  return sendAjax("/home/show/PublicPortal");
 }
 export const getPortalLists = () => {
-  return $.ajax({
-    url:'/home/show/PortalLists'
-  });
+  return sendAjax('/home/show/PortalLists');
 }
 export const getPortalArticle = (portalId) => {
-  return $.ajax({
-    url:'/home/show/PortalArticle',
-    data: {
-      id: portalId,
-    }
-  });
+  return sendAjax('/home/show/PortalArticle', { id: portalId });
 }
 export const getPortalCarousel = (portalId) => {
-  return $.ajax({
-    url:'/index.php/home/show/PortalCarousel',
-    data: {
-      id: portalId,
-    }
-  });
+  return sendAjax('/index.php/home/show/PortalCarousel', { id: portalId });
 }
 export const getPortalTheme = (portalId) => {
-  return $.ajax({
-    url:'/index.php/home/show/PortalTheme',
-    data: {
-      id: portalId,
-    }
-  });
+  return sendAjax('/index.php/home/show/PortalTheme', { id: portalId });
 }
 export const getMainData = (page = 1, themes, key, isthemeclick, isquestionarticle, isopen, isend) => {
-  return $.ajax({
-    url:'/home/article/lists',
-    data: {
+  return sendAjax(
+    '/home/article/lists',
+    {
       theme_id: themes || [],
       page,
       number: 10,
       isthemeclick: 1,
       key, isthemeclick, isquestionarticle, isopen, isend
     }
-  });
+  );
 }
 export const getUnreadList = (page = 1, portalId) => {
-  return $.ajax({
-    url: '/home/article/lists',
-    type: 'post',
-    data: {
-      page: page,
+  return sendAjax(
+    '/home/article/lists',
+    { page: page,
       number: 10,
       isopen: 2,
       portal_id: portalId,
     }
-  });
+  );
 }
 export const getArticle = (id) => {
-  return $.ajax({
-    url: '/home/index/show',
-    type: 'post',
-    data: {
-      id
-    }
-  });
+  return sendAjax('/home/index/show', { id } );
 }
 export const toggleDianzan = (id, key) => {
-  return $.ajax({
-    url: '/home/article/ArticleLike',
-    type: 'post',
-    data: {
-      id, key
-    }
-  });
+  return sendAjax('/home/article/ArticleLike', { id, key });
 }
 export const toggleShoucang = (id) => {
-  return $.ajax({
-    url: '/home/question/measure',
-    type: 'post',
-    data: {
-      id
-    }
-  });
+  return sendAjax('/home/question/measure', { id });
 }
 export const getThemeTag = (themeId) => {
-  return $.ajax({
-    url:'/home/theme/ThemeTag',
-    data: {
-      id: themeId
-    }
+  return sendAjax('/home/theme/ThemeTag', { id: themeId });
+}
+export const getVoteArticle = (page, tag_id, portal_id) => {
+  return new Promise((resolve, reject) => {
+    getTagArticle(page, tag_id, portal_id).then(data => {
+      let index = 0;
+      for(let i = 0, length = data.order.length; i < length; i++){
+        getArticleVoteCount(data.order[i].id).then(data2=>{
+          data.order[i].voteCount=data2.order.count;
+          index ++;
+          console.log(data.order);
+          if (index === length) {
+            resolve(data);
+          }
+        });
+      }
+    });
   });
+
 }
 export const getArticleVoteCount = (articleId) => {
-  return $.ajax({
-    url:'/home/article/ArticleVoteCount',
-    data: {
-      id: articleId
-    }
-  });
+  return sendAjax('/home/article/ArticleVoteCount', { id: articleId });
 }
 export const getArticleVoteInfo = (articleId) => {
-  return $.ajax({
-    url:'/home/article/ArticleVoteInfo',
-    data: {
-      id: articleId
-    }
-  });
+  return sendAjax('/home/article/ArticleVoteInfo', { id: articleId });
 }
 export const getVoteInfo = (articleId) => {
-  return $.ajax({
-    url:'/home/vote/VoteInfo',
-    data: {
-      id: articleId
-    }
-  });
+  return sendAjax('/home/vote/VoteInfo', { id: articleId });
 }
 // 内容推荐
 export const recommend = (article_id, type, text) => {
-  return $.ajax({
-    url:'/home/question/recommend',
-    data: {
+  return sendAjax(
+    '/home/question/recommend',
+    {
       article_id,
       type,
       text,
     }
-  });
+  );
 }
 // 建议
 export const commentapi = (id, type, text) => {
-  return $.ajax({
-    url:'/home/index/commentapi',
-    data: {
+  return sendAjax(
+    '/home/index/commentapi',
+    {
       id,
       type,
       text,
     }
-  });
+  );
 }
 // 提案
 export const question = (portal_id, type, title, text) => {
-  return $.ajax({
-    url: '/home/question/question',
-    data: {
-      portal_id, type, title, text
+  return sendAjax(
+    '/home/question/question',
+    {
+      portal_id,
+      type,
+      title,
+      text,
     }
-  })
+  );
 }
 //问卷提交
 export const pushAnswers = (id,select) => {
-  return $.ajax({
-    url: '/home/vote/vote',
-    data: {
-      id,select
-    }
-  })
+  return sendAjax('/home/vote/vote', { id,select });
 }
-export const getTagArticle = (tag_id) => {
-  return $.ajax({
-    url: '/home/article/lists',
-    type:'post',
-    data: {
-      tag_id
-    }
-  })
+export const getTagArticle = (page, tag_id, portal_id) => {
+  return sendAjax('/home/article/lists', { page, tag_id, portal_id, number: 10 });
+}
+export const getMutualList = (page, portal_id) => {
+  return sendAjax('/home/mutual/mutualList', { page, portal_id, number: 10 });
+}
+export const getMutualInfo = (id) => {
+  return sendAjax('/home/mutual/mutualInfo', { id });
+}
+export const likeMutual = (id, key) => {
+  return sendAjax('/home/mutual/mutualLike', { id, key });
+}
+export const getCommentList = (mutual_id, page) => {
+  return sendAjax('/home/mutual/CommentList', { mutual_id, page, number: 10 });
+}
+export const sendComment = (id, text) => {
+  return sendAjax('/home/mutual/Comment', { id, text });
+}
+export const likeComment = (id, key) => {
+  return sendAjax('/home/mutual/commentLike', { id, key });
 }
 
-   
+
+
 
 

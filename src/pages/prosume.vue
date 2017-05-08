@@ -37,7 +37,7 @@ export default {
         });
         return ;
       }
-      recommend(this.$root.getQueryData().id, this.$data.category, this.$data.text).done((data) => {
+      recommend(this.$root.getQueryData().id, this.$data.category, this.$data.text).then((data) => {
         if (data.state == 0) {
           this.$vux.alert.show({
             title: '提示',

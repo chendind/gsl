@@ -44,7 +44,7 @@ export default {
         });
         return ;
       }
-      question(portal_id, type, title, text).done((data) => {
+      question(portal_id, type, title, text).then((data) => {
         if (data.state == 0) {
           this.$vux.alert.show({
             title: '提示',

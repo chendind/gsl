@@ -36,7 +36,7 @@
       <div class="pd15 bg-white">{{title}}</div>
     </div>
     <div v-if="fn !== 2">
-      <grid class="grid bottom-operator bg-white no-before no-after" :rows="2">
+      <grid class="grid theme-bar bottom-operator bg-white no-before no-after" :rows="2">
         <grid-item class="grid-item grid-item3 no-before no-after" @on-item-click="toggleDianzan()">
           <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_grey.png')" v-show="!article_like">
           <img slot="icon" class="grid-item-icon" :src="require('@/assets/image/zan_blue.png')" v-show="article_like">
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     toggleDianzan(){
-      toggleDianzan(this.$data.article_id, 1 - this.$data.article_like).done((data) => {
+      toggleDianzan(this.$data.article_id, 1 - this.$data.article_like).then((data) => {
         if(data.state == 0) {
           this.$data.like_count = data.order.like_count;
           this.$data.article_like = 1 - this.$data.article_like;
@@ -84,7 +84,7 @@ export default {
       });
     },
     toggleShoucang(){
-      toggleShoucang(this.$data.article_id).done((data) => {
+      toggleShoucang(this.$data.article_id).then((data) => {
         if(data.state == 0) {
           this.$data.measure_count = data.order;
           this.$data.ismeasure = 1 - this.$data.ismeasure;
@@ -120,7 +120,7 @@ export default {
   mounted() {
     const params = this.$root.getQueryData();
     this.$data.article_id = params.id;
-    getArticle(this.$data.article_id).done((data) => {
+    getArticle(this.$data.article_id).then((data) => {
       this.$data.article_like = data[0].article_like || 0;
       this.$data.author = data[0].author;
       this.$data.in_time = data[0].in_time;
@@ -145,6 +145,10 @@ export default {
           this.$data.iframe = iframe;
         }
       }
+      if (data[0].vote_id) {
+        const query = this.$root.encodeObj({id: this.$data.article_id});
+        this.$root.replaceMobileWindow(`questionaireDetail?${query}`);
+      }
     })
   },
   updated() {
@@ -157,20 +161,6 @@ export default {
     color: #1a1a1a;
     font-size: 24px;
   }
-}
-.bottom-operator{
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 45px;
-}
-.grid{
-  padding: 10px 0 5px;
-  background-color: #fff;
-}
-.grid-item{
-  padding: 2px 10px !important;
 }
 .writing-button{
   position: absolute;
@@ -224,10 +214,6 @@ export default {
 }
 </style>
 <style lang='less'>
-.grid-item3 .weui-grid__icon{
-  width: 20px;
-  height: 20px;
-}
 .paragraph{
   p{
     color: #2a2a2a!important;

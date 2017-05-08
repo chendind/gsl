@@ -17,10 +17,10 @@ export default {
   methods: {
     touristLogin(){
       // 游客登录
-      getUserData().done((data1) => {
+      getUserData().then((data1) => {
         if (data1.state == 0) {
           localStorage.setItem('userId', data1.order);
-          getPublicPortal().done((data2) => {
+          getPublicPortal().then((data2) => {
             localStorage.setItem('portalLists', JSON.stringify(data2.order))
             localStorage.setItem('portalId', data2.order[0].id);
             localStorage.setItem('userType', 'tourist');
@@ -39,10 +39,10 @@ export default {
           data = {};
           data.openid = "c92d6478259631360f0578e0647aac92";
         }
-        getUserData(data.openId).done((data1) => {
+        getUserData(data.openId).then((data1) => {
           if (data1.state == 0) {
             localStorage.setItem('userId', data1.order);
-            getPortalLists().done((data2) => {
+            getPortalLists().then((data2) => {
               localStorage.setItem('portalLists', JSON.stringify(data2.order))
               localStorage.setItem('portalId', data2.order[0].id)
               localStorage.setItem('userType', 'user');

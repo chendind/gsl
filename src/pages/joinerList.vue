@@ -41,7 +41,7 @@ export default {
   methods: {
     loadTop(){
       const questionaireId = localStorage.getItem('questionaireId');
-      getArticleVoteInfo(questionaireId).done((data) => {
+      getArticleVoteInfo(questionaireId).then((data) => {
         if(data.state == 0){
           this.$data.voteInfo = data.order.read;
           this.$refs.loadmore.onTopLoaded();

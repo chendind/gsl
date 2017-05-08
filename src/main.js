@@ -30,6 +30,10 @@ Vue.filter('time2', (value) => {
   const date = getFormatTime(value);
   return `${date.y}-${date.m}-${date.d}`;
 });
+Vue.filter('time3', (value) => {
+  const date = getFormatTime(value);
+  return `${date.y}-${date.m}-${date.d} ${date.h}:${date.i}`;
+});
 //问卷调查中使用
 Vue.filter('outdated', (items) => {
   return items.filter(item => item.end_time*1000 < new Date().getTime());
@@ -66,16 +70,23 @@ new Vue({
           fullpath = `${location.origin+location.pathname}#/${url}`;
         }
         if (location.pathname.indexOf('Index')>=0) {
-          // console.log(`index.html#/${url}`, name || url2name[url] || "")
-
           Bridge.openMobileWindow(fullpath, name || url2name[url] || "", (result) => {
+            console.log('74')
             callback&&callback(result);
           });
         } else {
           location.href = fullpath;
-          // router.push({path: url})
         }
       }
+    },
+    replaceMobileWindow(url){
+      let fullpath;
+      if (url.match(/http[s]?:\/\//)) {
+        fullpath = url;
+      } else {
+        fullpath = `${location.origin+location.pathname}#/${url}`;
+      }
+      location.replace(fullpath);
     },
     // 把对象转换成字符串，并进行URI编码，用于url中的查询参数拼接
     encodeObj(obj){

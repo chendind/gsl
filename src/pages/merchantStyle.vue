@@ -47,7 +47,7 @@ export default {
     onPulldownLoading(){
       this.$root.disabledLink = true;
       const themeId = this.$data.themeId;
-      getThemeTag(themeId).done((data) => {
+      getThemeTag(themeId).then((data) => {
         if (data.state == 0) {
           this.$data.themeTags = data.order.map((item) => {
             const tag = {...item}
@@ -62,7 +62,7 @@ export default {
           });
         }
       });
-      getMainData(1, themeId, 1).done((data) => {
+      getMainData(1, themeId, 1).then((data) => {
         if (data.state == 0) {
           this.$data.articles = data.order;
           this.$refs.loadmore.onTopLoaded();
@@ -75,7 +75,7 @@ export default {
       this.$root.disabledLink = true;
       const themeId = this.$data.themeId;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, themeId, 1).done((data) => {
+      getMainData(page, themeId, 1).then((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,

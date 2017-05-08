@@ -1,28 +1,28 @@
 <template>
   <div>
-    <div v-for="(questionaire,$questionaireIndex) in questionaires" :key="$questionaireIndex" @click="setItem('questionaireId',questionaire.id);$root.openMobileWindow('questionaireDetail')">
-      <flexbox class="questionaire-sheet" orient="vertical">
+    <div v-for="(article,$index) in articleList" :key="$index" @click="goDetail(article)">
+      <flexbox class="article-sheet" orient="vertical">
         <flexbox-item>
-          {{questionaire.title}}
+          {{article.title}}
         </flexbox-item>
         <flexbox-item>
           <flexbox>
             <flexbox-item>
               <span>
                 <img src="http://portal.xiyoukeji.com/webTest/source/img/user.png" class="little-icon">
-                {{questionaire.voteCount}}人参与
+                {{article.voteCount}}人参与
               </span>
             </flexbox-item>
             <flexbox-item class="release-date">
               <span>
                 <img src="http://portal.xiyoukeji.com/webTest/source/img/time.png" class="little-icon">
-                  {{questionaire.in_time | time2}}
+                  {{article.in_time | time2}}
               </span>
             </flexbox-item>
           </flexbox>
         </flexbox-item>
         <flexbox-item class="bottom-tips">
-          <span>发起单位:{{questionaire.author}}</span>
+          <span>发起单位:{{article.author}}</span>
         </flexbox-item>
       </flexbox>
     </div>
@@ -36,21 +36,22 @@ export default {
     Flexbox, FlexboxItem
   },
   props: {
-    questionaires: {
+    articleList: {
       type: Array,
       default: [],
       required: false,
     }
   },
   methods: {
-    setItem:function(a,b) {
-      localStorage.setItem(a,b);
+    goDetail(article){
+      const query = this.$root.encodeObj({id: article.id})
+      this.$root.openMobileWindow(`questionaireDetail?${query}`)
     }
   }
 }
 </script>
 <style lang='less'>
-  .questionaire-sheet{
+  .article-sheet{
     background-color: white;
     padding:11px 15px;
     span{

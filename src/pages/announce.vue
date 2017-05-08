@@ -1,113 +1,151 @@
 <!-- 通知公告 -->
 <template>
   <div>
-    <tab class="tab-bar" active-color="#0084ff">
-      <tab-item selected @on-item-click="onItemClick">通知</tab-item>
-      <tab-item @on-item-click="onItemClick">公告</tab-item>
-    </tab>
-    <!-- 公告 -->
-    <div v-if="tabIndex === 1">
-      公告
-    </div>
-    <!-- 通知 -->
-    <div v-else>
-      <mt-loadmore 
-        :top-method="loadTop"
-        :bottom-method="loadBottom"
-        :bottom-all-loaded="allLoaded"
-        ref="loadmore"
-      >
-        <article-list :articles="articles">
-        </article-list>
-      </mt-loadmore>
-    </div>
+    <mt-loadmore
+      :top-method="loadTop"
+      :bottom-method="loadBottom"
+      :bottom-all-loaded="allLoaded[selectedIndex]"
+      :autoFill="false"
+      ref="loadmore"
+    >
+      <div>
+        <tab class="tab-bar" active-color="#0084ff">
+          <tab-item
+            v-for="(theme, $index) in themeTags"
+            @on-item-click="onItemClick($index)"
+            :selected="selectedIndex === $index"
+            :key="$index"
+          >{{theme.name}}</tab-item>
+        </tab>
+        <div v-for="(theme, $index) in themeTags" :key="$index" v-show="selectedIndex === $index">
+          <article-list :articles="articleList[$index]" :style="{'min-height': `${swiperHeight}px`}">
+          </article-list>
+        </div>
+      </div>
+    </mt-loadmore>
+    <!-- <swiper v-model="selectedIndex" :show-dots="false" :height="`${swiperHeight}px`">
+      <swiper-item v-for="(theme, $index) in themeTags" :key="$index" class="scroll-box swiper-item">
+        <mt-loadmore
+          :top-method="loadTop"
+          :bottom-method="loadBottom"
+          :bottom-all-loaded="allLoaded[$index]"
+          :autoFill="false"
+          ref="loadmore"
+        >
+          <article-list :articles="articleList[$index]" :style="{'min-height': `${swiperHeight}px`}">
+          </article-list>
+        </mt-loadmore>
+      </swiper-item>
+    </swiper> -->
   </div>
 </template>
 <script>
-import { Tab, TabItem } from 'vux'
+import { Tab, TabItem, Swiper, SwiperItem } from 'vux'
 import { Loadmore } from 'mint-ui'
 import articleList from '@/components/articleList.vue'
-import { getMainData, getThemeTag, getTagArticle} from '@/assets/js/ajax.js'
+import { getThemeTag, getTagArticle} from '@/assets/js/ajax.js'
 import $ from 'jquery'
 export default {
   name: 'announce',
   components: {
-    Tab, TabItem, 
-    articleList, 
+    Tab, TabItem, Swiper, SwiperItem,
+    articleList,
     mtLoadmore: Loadmore
   },
   data() {
     return {
       themeId:144,
-      tabIndex:0,
-      articles:[],
-      tagIds:[],
-      allLoaded:false
+      selectedIndex:0,
+      themeTags: [],
+      tagIds: [],
+      articleList: {},
+      allLoaded: {},
+      swiperHeight: window.innerHeight-54
     }
   },
   methods: {
-    onItemClick(n) {
-      this.tabIndex = n;
+    onItemClick(index) {
+      this.selectedIndex = index;
+      if (this.$data.articleList[index].length == 0) {
+        this.loadTop(index);
+      }
     },
-    loadTop(){
-      const themeId = this.$data.themeId;
-      const tabIndex = this.$data.tabIndex;
-      getThemeTag(themeId).done((data) => {
+    setAllLoaded(index, boolean){
+      this.$data.allLoaded[index] = boolean;
+      this.$data.allLoaded = {...this.$data.allLoaded};
+    },
+    loadTop(index){
+      this.$root.disabledLink = true;
+      const selectedIndex = index === undefined ? this.$data.selectedIndex : index;
+      const tagId = this.$data.themeTags[selectedIndex].id;
+
+      const portalId = localStorage.getItem('portalId');
+      getTagArticle(1, tagId, portalId).then((data) => {
         if (data.state == 0) {
-          this.$data.themeTags = data.order;
-          data.order.forEach(item => {
-            this.$data.tagIds.push(item.id);
-          })
+          const _articleList = {
+            ...this.$data.articleList,
+          };
+          _articleList[selectedIndex] = data.order;
+          this.$data.articleList = _articleList;
+          this.setAllLoaded(selectedIndex, false);
+          if (data.order.length < 10) {
+            this.setAllLoaded(selectedIndex, true);
+          }
         }
+        this.$refs.loadmore.onTopLoaded();
+        this.$root.disabledLink = false;
       });
-      $.ajax({
-          url: '/home/article/lists',
-          type:'post',
-          data: {
-            tag_id:546,
-            page:1,
-            number:10,
-          },
-          success:function(data){console.log(data)}
-      })
-      let tagIds = this.$data.tagIds;
-      getTagArticle(546,144).done((data) => {
-        console.log(data)
-        if (data.state == 0) {
-          this.$data.articles = data.order;
-        }
-      });
-      this.$refs.loadmore.onTopLoaded();
+
     },
     loadBottom(){
-      const themeId = this.$data.themeId;
-      const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, themeId).done((data) => {
+      this.$root.disabledLink = true;
+      const selectedIndex = this.$data.selectedIndex;
+      const tagId = this.$data.themeTags[selectedIndex].id;
+      const page = Math.floor(this.$data.articleList[selectedIndex].length / 10) + 1;
+      const portalId = localStorage.getItem('portalId');
+      getTagArticle(page, tagId, portalId).then((data) => {
         let pendingLength = data.order.length;
         if (pendingLength > 0) {
-          this.$data.articles = [
-            ...this.$data.articles,
-            ...data.order,
-          ];
-          this.$refs.loadmore.onBottomLoaded();
-        }else{
-          this.$data.allLoaded = true;
+          const _articleList = {
+            ...this.$data.articleList,
+          };
+          _articleList[selectedIndex] = _articleList[selectedIndex].concat(data.order);
+          this.$data.articleList = _articleList;
+        } else{
+          this.setAllLoaded(selectedIndex, true);
         }
         if(pendingLength < 10) {
-          this.$data.allLoaded = true;
+          this.setAllLoaded(selectedIndex, true);
         }
+        this.$refs.loadmore.onBottomLoaded();
+        this.$root.disabledLink = false;
       })
     }
   },
+  created() {
+    const themeId = this.$data.themeId;
+    getThemeTag(themeId).then((data) => {
+      if (data.state == 0) {
+        this.$data.themeTags = data.order;
+        data.order.forEach((item, index) => {
+          this.$data.articleList[index] = [];
+          this.$data.allLoaded[index] = false;
+        });
+        this.loadTop();
+      }
+    });
+  },
   mounted() {
-    this.loadTop();
+
   },
   updated() {
   }
 }
 </script>
 <style lang='less' scoped>
-  .tab-bar{
-    margin-bottom:11px;
-  }
+.tab-bar{
+  margin-bottom: 10px;
+}
+.swiper-item{
+}
 </style>

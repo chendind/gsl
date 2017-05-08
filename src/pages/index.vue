@@ -83,12 +83,9 @@ export default {
     mtLoadmore: Loadmore,
   },
   methods: {
-    apply(){
-      console.log('立即申请');
-    },
     getNewestMainData(){
       this.$root.disabledLink = true;
-      getMainData(1, this.$data.articleThemes).done((data) => {
+      getMainData(1, this.$data.articleThemes).then((data) => {
         this.$data.articles = data.order;
         this.$refs.loadmore.onTopLoaded();
         this.$data.allLoaded = false;
@@ -98,7 +95,7 @@ export default {
     getMoreMainData(){
       this.$root.disabledLink = true;
       const page = Math.floor(this.$data.articles.length / 10) + 1;
-      getMainData(page, this.$data.articleThemes).done((data) => {
+      getMainData(page, this.$data.articleThemes).then((data) => {
         if (data.order.length > 0) {
           this.$data.articles = [
             ...this.$data.articles,
@@ -115,7 +112,7 @@ export default {
       });
     },
     getUnreadList(){
-      getUnreadList(1, this.$data.portalId).done((data) => {
+      getUnreadList(1, this.$data.portalId).then((data) => {
         if (data.state == 0) {
           this.$data.unreadNumber = data.open_count;
         }
@@ -129,23 +126,23 @@ export default {
       }
       // 获得未读消息
       this.getUnreadList();
-      $.when(
+      Promise.all([
         getPortalArticle(portalId),
         getPortalCarousel(portalId),
         getPortalTheme(portalId),
-      ).done((data1, data2, data3) => {
-        if (data1[0].state == 0) {
-          this.$data.articleThemes = data1[0].order.article_theme.map((item) => {
+      ]).then(([data1, data2, data3]) => {
+        if (data1.state == 0) {
+          this.$data.articleThemes = data1.order.article_theme.map((item) => {
             return item.id;
           });
           localStorage.setItem('themeIds', JSON.stringify(this.$data.articleThemes));
           this.getNewestMainData();
         }
-        if (data2[0].state == 0) {
-          this.$data.carousels = data2[0].order.carousel;
+        if (data2.state == 0) {
+          this.$data.carousels = data2.order.carousel;
         }
-        if (data3[0].state == 0) {
-          this.$data.themes = data3[0].order.theme.map((item, index) => {
+        if (data3.state == 0) {
+          this.$data.themes = data3.order.theme.map((item, index) => {
             let url;
             switch(item.id - 0){
               case 151: url = 'mutualAid'; break; // 生活互助
@@ -164,17 +161,15 @@ export default {
               url: item.link || url,
             }
           });
-          this.$data.themeLayout = data3[0].order.theme_layout;
+          this.$data.themeLayout = data3.order.theme_layout;
         }
         this.$refs.loadmore.onTopLoaded();
       })
     },
     onPulldownLoading(){
-      console.log('onPulldownLoading');
       this.allRefresh();
     },
     onPullupLoading(){
-      console.log('onPullupLoading');
       this.getMoreMainData(this.$data.page);
     },
     setItem(a,b){
@@ -194,7 +189,7 @@ export default {
           return;
         }
         // 获得是否订阅公众号
-        getSubscription(localStorage.getItem('userId')).done((data) => {
+        getSubscription(localStorage.getItem('userId')).then((data) => {
           if (data.state == 0) {
             Bridge.openSubscription('21415');
           } else {

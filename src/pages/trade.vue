@@ -1,15 +1,124 @@
 <!-- 招商经贸 -->
 <template>
   <div>
-招商经贸
+    <mt-loadmore class="scroller"
+      :top-method="loadTop"
+      :bottom-method="loadBottom"
+      :bottom-all-loaded="allLoaded[selectedIndex]"
+      :autoFill="false"
+      ref="loadmore"
+    >
+      <div>
+        <x-img class="top-pic" :src="require('@/assets/image/tradeBanner.png')"></x-img>
+        <tab class="tab-bar" active-color="#0084ff">
+          <tab-item
+            v-for="(theme, $index) in themeTags"
+            @on-item-click="onItemClick($index)"
+            :selected="selectedIndex === $index"
+            :key="$index"
+          >{{theme.name}}</tab-item>
+        </tab>
+        <div v-for="(theme, $index) in themeTags" :key="$index" v-show="selectedIndex === $index">
+          <article-list :articles="articleList[$index]" :style="{'min-height': `${swiperHeight}px`}">
+          </article-list>
+        </div>
+      </div>
+    </mt-loadmore>
   </div>
 </template>
 <script>
+import { Scroller, XImg, Grid, GridItem, Tab, TabItem} from 'vux'
+import { Loadmore } from 'mint-ui'
+import articleList from '@/components/articleList.vue'
+import { getThemeTag, getTagArticle} from '@/assets/js/ajax.js'
 export default {
   name: 'trade',
   components: {
+    Scroller, XImg, Grid, GridItem, Tab, TabItem,
+    articleList,
+    mtLoadmore: Loadmore
+  },
+  data() {
+    return {
+      themeId:177,
+      selectedIndex:0,
+      themeTags: [],
+      articleList: {},
+      allLoaded: {},
+      swiperHeight: window.innerHeight-54-window.innerWidth/2
+    }
   },
   methods: {
+    onItemClick(index) {
+      this.selectedIndex = index;
+      if (this.$data.articleList[index].length == 0) {
+        this.loadTop(index);
+      }
+    },
+    setAllLoaded(index, boolean){
+      this.$data.allLoaded[index] = boolean;
+      this.$data.allLoaded = {...this.$data.allLoaded};
+    },
+    loadTop(index){
+      this.$root.disabledLink = true;
+      const selectedIndex = index === undefined ? this.$data.selectedIndex : index;
+      const tagId = this.$data.themeTags[selectedIndex].id;
+
+      const portalId = localStorage.getItem('portalId');
+      getTagArticle(1, tagId, portalId).then((data) => {
+        if (data.state == 0) {
+          const _articleList = {
+            ...this.$data.articleList,
+          };
+          _articleList[selectedIndex] = data.order;
+          this.$data.articleList = _articleList;
+          this.setAllLoaded(selectedIndex, false);
+          if (data.order.length < 10) {
+            this.setAllLoaded(selectedIndex, true);
+          }
+        }
+        this.$refs.loadmore.onTopLoaded();
+        this.$root.disabledLink = false;
+      });
+
+    },
+    loadBottom(){
+      this.$root.disabledLink = true;
+      const selectedIndex = this.$data.selectedIndex;
+      const tagId = this.$data.themeTags[selectedIndex].id;
+      const page = Math.floor(this.$data.articleList[selectedIndex].length / 10) + 1;
+      const portalId = localStorage.getItem('portalId');
+      getTagArticle(page, tagId, portalId).then((data) => {
+        let pendingLength = data.order.length;
+        if (pendingLength > 0) {
+          const _articleList = {
+            ...this.$data.articleList,
+          };
+          _articleList[selectedIndex] = _articleList[selectedIndex].concat(data.order);
+          this.$data.articleList = _articleList;
+        } else{
+          this.setAllLoaded(selectedIndex, true);
+        }
+        if(pendingLength < 10) {
+          this.setAllLoaded(selectedIndex, true);
+        }
+        this.$refs.loadmore.onBottomLoaded();
+        this.$root.disabledLink = false;
+      })
+    }
+  },
+  created() {
+    const themeId = this.$data.themeId;
+    getThemeTag(themeId).then((data) => {
+      if (data.state == 0) {
+        this.$data.themeTags = data.order;
+        data.order.forEach((item, index) => {
+          this.$data.articleList[index] = [];
+          this.$data.allLoaded[index] = false;
+        });
+        this.loadTop();
+      }
+    });
   },
   mounted() {
   },
@@ -18,5 +127,7 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-
+.tab-bar{
+  margin-bottom: 10px;
+}
 </style>
