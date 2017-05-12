@@ -11,7 +11,7 @@ import '@/assets/js/public.js'
 import '@/assets/js/vconsole.min.js'
 import '@/assets/less/public.less'
 
-FastClick.attach(document.body)
+// FastClick.attach(document.body)
 
 Vue.use(AlertPlugin)
 Vue.use(MintUI)
@@ -40,11 +40,12 @@ Vue.filter('outdated', (items) => {
 });
 
 /* eslint-disable no-new */
-new Vue({
+export const rootVue = new Vue({
   router,
   data(){
     return {
       disabledLink: false,
+      isApp: location.pathname.indexOf('Index')>=0,
     }
   },
   methods: {
@@ -69,9 +70,9 @@ new Vue({
         } else {
           fullpath = `${location.origin+location.pathname}#/${url}`;
         }
-        if (location.pathname.indexOf('Index')>=0) {
+        if (this.isApp) {
+          console.log(name || url2name[url] || "")
           Bridge.openMobileWindow(fullpath, name || url2name[url] || "", (result) => {
-            console.log('74')
             callback&&callback(result);
           });
         } else {
@@ -95,7 +96,7 @@ new Vue({
     // 获取url中的search，提取数据
     getQueryData(){
       var searchUrl = window.location.hash.split("?")[1];
-      if (searchUrl.indexOf('&random=')) {
+      if (searchUrl&&searchUrl.indexOf('&random=')) {
         searchUrl = searchUrl.split('&random=')[0];
       }
       var URI = decodeURIComponent(searchUrl);
@@ -113,7 +114,6 @@ new Vue({
   },
   render: h => h(App),
 }).$mount('#app-box')
-
 
 function getFormatTime(value) {
   const date = new Date(value*1000);

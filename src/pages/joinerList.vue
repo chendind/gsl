@@ -12,12 +12,15 @@
       :bottomLoadingText="displayText"
       ref="loadmore"
     >
-      <cell v-for="(user, $index) in voteInfo" :border-intent="true" :key="$index">
-        <span slot="after-title" >
-          <img  class="user-avatar" :src="user.avatar">
-          {{user.user_name}}
-        </span>
-      </cell>
+      <div :style="{'min-height': `${scrollMinHeight}px`}">
+        <cell v-for="(user, $index) in voteInfo" :border-intent="true" :key="$index">
+          <span slot="after-title" >
+            <img  class="user-avatar" :src="user.avatar">
+            {{user.user_name}}
+          </span>
+        </cell>
+      </div>
+
     </mt-loadmore>
   </div>
 </template>
@@ -33,15 +36,16 @@ export default {
   },
   data() {
     return {
+      articleId: 0,
       voteInfo:[],
       allLoaded:false,
-      displayText:"没有更多数据了"
+      displayText:"没有更多数据了",
+      scrollMinHeight: window.innerHeight - 44
     }
   },
   methods: {
     loadTop(){
-      const questionaireId = localStorage.getItem('questionaireId');
-      getArticleVoteInfo(questionaireId).then((data) => {
+      getArticleVoteInfo(this.$data.articleId).then((data) => {
         if(data.state == 0){
           this.$data.voteInfo = data.order.read;
           this.$refs.loadmore.onTopLoaded();
@@ -51,6 +55,9 @@ export default {
     loadBottom(){
       this.$refs.loadmore.onBottomLoaded();
     }
+  },
+  created(){
+    this.$data.articleId = this.$root.getQueryData().id;
   },
   mounted() {
     this.loadTop();

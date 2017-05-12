@@ -203,6 +203,9 @@ input, textarea, select{
       width: 33.3%;
       height: 20vw;
     }
+    .weui-media-box__thumb{
+      height: 100%;
+    }
   }
   .three-img-box{
     padding-bottom: 35px;
@@ -237,7 +240,10 @@ input, textarea, select{
   background-color: #0084ff !important;
   color: #fff !important;
 }
-
+.weui-btn_grey{
+  color: rgba(0, 0, 0, 0.3) !important;
+  background-color: #f7f7f7 !important;
+}
 .theme-bar{
   padding: 10px 0 5px;
   margin-bottom: 10px;
@@ -265,7 +271,11 @@ input, textarea, select{
       display: none;
     }
     &:after{
-      display: none;
+      display: block;
+      border: none;
+      top: 0;
+      transform: none;
+      height: auto;
     }
     .grid-item-label{
       color: #999;
@@ -293,7 +303,12 @@ input, textarea, select{
 .wenjuandiaochamorenquyu, #huizhikamorenquyu{
   display: none;
 }
-
+.no-border-radius{
+  border-radius: 0 !important;
+  &:after{
+    border-radius: 0 !important;
+  }
+}
 
 
 

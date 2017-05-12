@@ -25,10 +25,10 @@
           <swiper-item v-for="n in Math.ceil(themes.length / (themeLayout.column * themeLayout.row))" :key="n">
             <grid class="grid theme-bar bg-white no-before no-after" :rows="themeLayout.column">
               <grid-item
-                class="grid-item grid-item1 no-before no-after"
+                class="grid-item grid-item1 no-before"
                 v-for="(theme, $index) in themes.slice((n-1) * themeLayout.column * themeLayout.row, n * themeLayout.column * themeLayout.row)"
                 :key="$index"
-                @on-item-click="setItem('themeId',theme.id);goTheme(theme)"
+                @on-item-click="goTheme(theme)"
               >
                 <img slot="icon" class="grid-item-icon" :src="theme.logo">
                 <span slot="label" class="grid-item-label">{{theme.theme}}</span>
@@ -37,7 +37,7 @@
           </swiper-item>
         </swiper>
         <grid class="grid theme-bar bg-white no-before no-after" :rows="themeLayout.column" v-if="themeLayout.ispagination === 'false' || !themeLayout.ispagination">
-          <grid-item class="grid-item grid-item1 no-before no-after" v-for="(theme, $index) in themes" :key="$index" @on-item-click="setItem('themeId',theme.id);goTheme(theme)">
+          <grid-item class="grid-item grid-item1 no-before" v-for="(theme, $index) in themes" :key="$index" @on-item-click="goTheme(theme)">
             <img slot="icon" class="grid-item-icon" :src="theme.logo">
             <span slot="label" class="grid-item-label">{{theme.theme}}</span>
           </grid-item>
@@ -180,12 +180,14 @@ export default {
         // 用户点击了订阅服务
         if (localStorage.getItem('userType') == 'tourist') {
           // 判断用户是不是游客
-          this.$vux.alert.show({
-            title: '提示',
-            content: '游客暂不支持咨询服务！',
-            onShow () {},
-            onHide () {}
-          });
+          // this.$vux.alert.show({
+          //   title: '提示',
+          //   content: '游客暂不支持咨询服务！',
+          //   onShow () {},
+          //   onHide () {}
+          // });
+          // return;
+          this.$root.openMobileWindow('http://gsl.beyondin.com');
           return;
         }
         // 获得是否订阅公众号
@@ -233,18 +235,17 @@ export default {
     this.allRefresh();
     if (this.$data.portalLists.length > 1) {
       Bridge.addMobileWindowButton('切换',() => {
-        // this.togglePortalBox();
+        this.$root.isApp&&this.togglePortalBox();
         return true;
       });
     } else {
-      Bridge.addMobileWindowButton('',() => {
-        return true;
-      });
+      // Bridge.addMobileWindowButton('',() => {
+      //   return true;
+      // });
     }
     window.tpb = this.togglePortalBox;
   },
   updated() {
-    // this.$refs.loadmore.reset();
   }
 }
 </script>

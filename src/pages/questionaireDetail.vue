@@ -5,7 +5,6 @@
       <div v-show="!isQuestionaireShown" class="page1 full-page-box">
         <mt-loadmore
           :bottom-method="loadBottom"
-          :bottomDistance="bottomDistance"
           bottomPullText="上拉填写问卷"
           bottomDropText="释放进行问卷填写"
           bottomLoadingText=""
@@ -24,7 +23,7 @@
               </span>
             </cell>
             <cell :border-intent="false">
-              <span slot="after-title" @click="$root.openMobileWindow('joinerList')">
+              <span slot="after-title" @click="goJoinerList">
                 <div class="user-info">
                   已报名<span class="vote-count">{{voteInfo.length}}</span>人
                   <p class='avatar-list'>
@@ -40,6 +39,7 @@
             </cell>
           </div>
         </mt-loadmore>
+        <x-button class="receipt-button" type="primary" v-if="detail.receipt_title !== undefined" @click.native="receiptButtonClick">我要报名</x-button>
       </div>
     </transition>
     <transition name="page2">
@@ -59,10 +59,13 @@
             </cell>
             <div class="questionaire">
               <questionaire-checklist :questionaire="questionaire" ref="questionaire-checklist"></questionaire-checklist>
+              <div class="full-page-box" v-if="!!detail.isvote"></div>
             </div>
           </div>
         </mt-loadmore>
-        <x-button type="primary" @click.native="submit">确认提交</x-button>
+        <x-button type="disabled" v-if="userType === 'tourist'">请您登录后再提交问卷</x-button>
+        <x-button type="primary" @click.native="submit" v-else-if="!detail.isvote && userType !== 'tourist'">确认提交</x-button>
+        <x-button type="disabled" v-else>您已提交过该问卷</x-button>
       </div>
     </transition>
   </div>
@@ -70,7 +73,7 @@
 <script>
 import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton} from 'vux'
 import { Loadmore } from 'mint-ui';
-import { getArticle, getArticleVoteInfo, getVoteInfo } from '@/assets/js/ajax.js'
+import { getArticle, getArticleVoteInfo, getVoteInfo, pushAnswers } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
 import $ from 'jquery'
 export default {
@@ -89,17 +92,27 @@ export default {
       questionaire: {},
       answer: [],
       isQuestionaireShown: false,
-      bottomDistance: 150,
       hasText: false,
+      userType: localStorage.getItem('userType'),
     }
   },
   methods: {
+    goJoinerList(){
+      const query = this.$root.encodeObj({
+        id: this.$data.articleId,
+      });
+      this.$root.openMobileWindow(`joinerList?${query}`)
+    },
     refresh(){
       const articleId = this.$data.articleId;
       //获取问卷介绍
       getArticle(articleId).then((data) => {
         this.$data.detail = data[0];
-        this.$data.hasText = !!data[0].text;
+        window.shareData={
+          title: this.$data.detail.title,
+          desc: $(this.$data.detail.text).text(),
+        };
+        this.$data.hasText = !!$.trim($(data[0].text).text());
       });
       //获取报名用户信息
       getArticleVoteInfo(articleId).then((data) => {
@@ -127,7 +140,32 @@ export default {
       this.$refs.loadmore2.onTopLoaded();
     },
     submit(){
-      this.$refs['questionaire-checklist'].submit();
+      const articleId = this.$data.articleId;
+      const answers = this.$refs['questionaire-checklist'].getAnswers();
+      pushAnswers(articleId, answers).then(data => {
+        if (data.state == 0) {
+          this.$vux.alert.show({
+            title: '提示',
+            content: '提交成功',
+            onShow () {},
+            onHide () {}
+          });
+        }
+        else if (data.state == 10003) {
+          this.$vux.alert.show({
+            title: '提示',
+            content: '投票已过期',
+            onShow () {},
+            onHide () {}
+          });
+        }
+      })
+    },
+    receiptButtonClick(){
+      const query = this.$root.encodeObj({
+        id: this.$data.detail.id,
+      });
+      this.$root.openMobileWindow(`receipt?${query}`, this.$data.detail.title);
     }
   },
   created() {
@@ -135,6 +173,7 @@ export default {
   },
   mounted() {
     this.refresh();
+    Bridge.supportShare(true);
   }
 }
 </script>
@@ -213,6 +252,7 @@ export default {
     -ms-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
 .questionaire{
+  position: relative;
   margin-top: 11px;
   margin-bottom: 44px;
   padding-bottom: 10px;
@@ -225,6 +265,13 @@ export default {
   z-index:100;
   bottom:0;
   left:0;
+  &:after{
+    border: none;
+  }
+}
+.weui-btn_disabled{
+  color: rgba(0, 0, 0, 0.3);
+  background-color: #f7f7f7 !important;
 }
 .page1,.page2{
   position: absolute;

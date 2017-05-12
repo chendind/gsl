@@ -93,7 +93,7 @@ export default {
     },
     goArticle(article) {
       const query = this.$root.encodeObj({id: article.id})
-      this.$root.openMobileWindow(`article?${query}`)
+      this.$root.openMobileWindow(`article?${query}`, article.title);
     }
   },
   mounted() {

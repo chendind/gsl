@@ -53,12 +53,12 @@ export default {
     },
   },
   methods: {
-    goArticle({id, link}){
+    goArticle({id, link, title}){
       if (!link) {
         const url = this.$root.encodeObj({
           id
         });
-        this.$root.openMobileWindow(`mutualAidInfo?${url}`);
+        this.$root.openMobileWindow(`mutualAidInfo?${url}`, title);
       } else {
         this.$root.openMobileWindow(link);
       }

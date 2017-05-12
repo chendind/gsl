@@ -17,6 +17,11 @@
             </div>
           </div>
           <div class="paragraph" v-html="text"></div>
+          <div>
+            <div v-for="file in files">
+              附件<a class="file-link" @click="openFileLink(file)">{{file.name}}</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -96,7 +101,37 @@ export default {
     },
     hideSubButton(){
       this.$data.isShowSubButton = false;
-    }
+    },
+    getDownloadFile(text){
+      const aDom = $('.paragraph').find('.list-paddingleft-2').find('a');
+      $.each(aDom, (index, dom) => {
+        this.$data.files.push({
+          url: $(dom).attr('href'),
+          name: $(dom).text()
+        });
+      });
+    },
+    bindOtherLinkEvent(text){
+      const aDom = $('.paragraph').find('a');
+      $.each(aDom, (index, dom) => {
+        $(dom).on('click', (e)=>{
+          e.preventDefault();
+          if (this.$root.isApp) {
+            Bridge.openMobileWindow(dom.href, '');
+          } else {
+            window.open(dom.href)
+          }
+        })
+      });
+    },
+    openFileLink(file){
+      if (this.$root.isApp) {
+        Bridge.showDownloadFile({"url": file.url,"name": file.name});
+      } else {
+        window.open(file.url)
+      }
+    },
+
   },
   data() {
     return {
@@ -115,12 +150,18 @@ export default {
       fn: 0,
       photo_photo: [],
       iframe: '',
+      files: []
     }
   },
-  mounted() {
+  created() {
     const params = this.$root.getQueryData();
     this.$data.article_id = params.id;
     getArticle(this.$data.article_id).then((data) => {
+      // 如果是投票，跳转至投票页面
+      if (data[0].vote_id) {
+        const query = this.$root.encodeObj({id: this.$data.article_id});
+        this.$root.replaceMobileWindow(`questionaireDetail?${query}`);
+      }
       this.$data.article_like = data[0].article_like || 0;
       this.$data.author = data[0].author;
       this.$data.in_time = data[0].in_time;
@@ -145,11 +186,17 @@ export default {
           this.$data.iframe = iframe;
         }
       }
-      if (data[0].vote_id) {
-        const query = this.$root.encodeObj({id: this.$data.article_id});
-        this.$root.replaceMobileWindow(`questionaireDetail?${query}`);
-      }
-    })
+      // 获得所有下载文件
+      this.$nextTick(() => {
+        this.getDownloadFile(data[0].text);
+        this.bindOtherLinkEvent(data[0].text);
+      });
+      window.shareData={
+        title: this.$data.title,
+        desc: $(this.$data.text).text(),
+      };
+    });
+    Bridge.supportShare(true);
   },
   updated() {
   }
@@ -212,6 +259,12 @@ export default {
   min-height: 20vh;
   background-color: rgba(0,0,0,0.5);
 }
+
+.file-link{
+  color: blue;
+  margin-left: 5px;
+  text-decoration: underline;
+}
 </style>
 <style lang='less'>
 .paragraph{
@@ -231,6 +284,9 @@ export default {
     font-size: 16px!important;
     line-height: 32px!important;
   }
+}
+.list-paddingleft-2{
+  display: none;
 }
 </style>
 

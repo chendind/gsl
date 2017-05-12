@@ -19,7 +19,7 @@
           >{{theme.name}}</tab-item>
         </tab>
         <div v-for="(theme, $index) in themeTags" :key="$index" v-show="selectedIndex === $index">
-          <questionaire-list :questionaires="articleList[$index]" :style="{'min-height': `${swiperHeight}px`}">
+          <questionaire-list :articleList="articleList[$index]" :style="{'min-height': `${swiperHeight}px`}">
           </questionaire-list>
         </div>
         <!-- 历史问卷 -->
@@ -72,7 +72,6 @@ export default {
       this.$root.disabledLink = true;
       const selectedIndex = index === undefined ? this.$data.selectedIndex : index;
       const tagId = this.$data.themeTags[selectedIndex].id;
-
       const portalId = localStorage.getItem('portalId');
       getVoteArticle(1, tagId, portalId).then((data) => {
         if (data.state == 0) {

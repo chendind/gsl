@@ -10,6 +10,13 @@
         <div class="text color-light-grey size14">
           {{article.text}}
         </div>
+        <flexbox wrap="wrap" :gutter="0">
+          <flexbox-item :span="4" v-for="(photo, $index) in article.photo" :key="$index">
+            <div class="three-img-box">
+              <img :src="photo">
+            </div>
+          </flexbox-item>
+        </flexbox>
         <div class="mv10"></div>
       </div>
       <div class="comment-box bg-white mv10">
@@ -217,6 +224,10 @@ export default {
     getMutualInfo(this.$data.id).then((data) => {
       if (data.state == 0) {
         this.$data.article = data.order;
+        window.shareData={
+          title: this.$data.article.title,
+          text: this.$data.article.text,
+        };
       }
     });
     this.getNewestCommentList();
@@ -226,6 +237,7 @@ export default {
       onShow () {},
       onHide () {}
     });
+    Bridge.supportShare(true);
   },
   updated() {
   }
@@ -262,6 +274,9 @@ export default {
 }
 .write-comment-box{
 
+}
+.three-img-box{
+  padding: 5px;
 }
 </style>
 

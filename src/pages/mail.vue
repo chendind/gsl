@@ -5,7 +5,7 @@
       <div class="pd15" style="font-size: 16px;padding-bottom: 0;color: #666;">我的{{type}}标题是：</div>
       <input class="title pd15" type="text" placeholder="请输入标题" v-model="title">
       <textarea class="content pd15" placeholder="请输入内容" v-model="text"></textarea>
-      <x-button class="weui-btn_blue button" @click.native="submit">提交</x-button>
+      <x-button class="weui-btn_blue button no-border-radius" @click.native="submit">提交</x-button>
     </div>
   </div>
 </template>
@@ -73,6 +73,7 @@ export default {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
   outline: 0;
+  line-height: 1;
 }
 .content {
   display: block;
@@ -90,5 +91,6 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+  height: 50px;
 }
 </style>

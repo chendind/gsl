@@ -129,6 +129,13 @@ export default new Router({
       }
     },
     {
+      path: '/addingAidInfo',
+      name: 'addingAidInfo',
+      component(r){
+        r(require('@/pages/addingAidInfo'));
+      }
+    },
+    {
       path: '/advice',
       name: 'advice',
       component(r){
@@ -147,6 +154,13 @@ export default new Router({
       name: 'mail',
       component(r){
         r(require('@/pages/mail'));
+      }
+    },
+    {
+      path: '/receipt', // 主席信箱中的二级页面
+      name: 'receipt',
+      component(r){
+        r(require('@/pages/receipt'));
       }
     },
   ]

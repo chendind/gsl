@@ -24,7 +24,6 @@
 </template>
 <script>
 import { Checklist } from 'vux'
-import { pushAnswers } from '@/assets/js/ajax.js'
 import $ from 'jquery'
 export default {
   name: 'questionaireChecklist',
@@ -62,7 +61,7 @@ export default {
         question.children[index2].isselect = !!checked;
       }
     },
-    submit(){
+    getAnswers(){
       const answers = this.questionaire.children.map((item) => {
         const choice_id = [];
         item.children.forEach((child) => {
@@ -75,10 +74,8 @@ export default {
           choice_id,
         }
       });
-      pushAnswers(this.questionaire.id,answers).then(data => {
-
-      })
-    }
+      return answers;
+    },
   },
   watch: {
     submit: function() {

@@ -24,7 +24,7 @@ export default {
             localStorage.setItem('portalLists', JSON.stringify(data2.order))
             localStorage.setItem('portalId', data2.order[0].id);
             localStorage.setItem('userType', 'tourist');
-            router.replace({path: 'index', query: {_: new Date() - 0}});
+            this.loginSuccess();
           })
         }
       })
@@ -33,11 +33,12 @@ export default {
       // 正常登录
       Bridge.setAppID("21216");
       Bridge.tryLogin((data) => {
+        console.log(`Bridge登陆：${JSON.stringify(data)}`)
         if (!data) {
-          // this.touristLogin();
-          // return;
-          data = {};
-          data.openid = "c92d6478259631360f0578e0647aac92";
+          // data = {};
+          // data.openid = "c92d6478259631360f0578e0647aac92";
+          this.touristLogin();
+          return;
         }
         getUserData(data.openId).then((data1) => {
           if (data1.state == 0) {
@@ -46,11 +47,19 @@ export default {
               localStorage.setItem('portalLists', JSON.stringify(data2.order))
               localStorage.setItem('portalId', data2.order[0].id)
               localStorage.setItem('userType', 'user');
-              router.replace({path: 'index', query: {_: new Date() - 0}});
+              this.loginSuccess();
             });
           }
         });
       });
+    },
+    loginSuccess(){
+      const query = this.$root.getQueryData();
+      if (query && query.url) {
+        this.$root.replaceMobileWindow(query.url);
+      } else {
+        router.replace({path: 'index', query: {_: new Date() - 0}});
+      }
     }
   },
   mounted(){

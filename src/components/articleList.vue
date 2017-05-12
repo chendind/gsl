@@ -7,13 +7,13 @@
         </div>
         <flexbox justify="space-between" align="stretch">
           <flexbox-item class="imgbox" :key="0">
-            <img :src="article.photo">
+            <img :src="article.photo" v-show="article.photo">
           </flexbox-item>
           <flexbox-item class="imgbox" :key="1">
-            <img :src="article.photo2">
+            <img :src="article.photo2" v-show="article.photo2">
           </flexbox-item>
           <flexbox-item class="imgbox" :key="2">
-            <img :src="article.photo2">
+            <img :src="article.photo3" v-show="article.photo3">
           </flexbox-item>
         </flexbox>
         <div class="weui-media-box__bottom color-light-grey">
@@ -27,7 +27,7 @@
           <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
         </div>
         <div class="imgbox">
-          <img :src="article.photo_photo">
+          <img :src="article.photo_photo" v-show="article.photo_photo">
         </div>
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
@@ -40,7 +40,7 @@
           <h4 class="weui-media-box__title mutilEllipsis-2">{{article.title}}</h4>
         </div>
         <div class="weui-media-box__hd" v-if="article.function == 3">
-          <img :src="article.photo" class="weui-media-box__thumb">
+          <img :src="article.photo" class="weui-media-box__thumb" v-show="article.photo">
         </div>
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
@@ -53,7 +53,7 @@
           <h4 class="weui-media-box__title mutilEllipsis-2"><i class="fa fa-fw fa-video-camera"></i>{{article.title}}</h4>
         </div>
         <div class="imgbox">
-          <img :src="article.photo">
+          <img :src="article.photo" v-show="article.photo">
         </div>
         <div class="weui-media-box__bottom color-light-grey">
           <span>{{article.theme}}</span>
@@ -95,12 +95,12 @@ export default {
     },
   },
   methods: {
-    goArticle({id, link}){
+    goArticle({id, link, title}){
       if (!link) {
         const url = this.$root.encodeObj({
           id
         });
-        this.$root.openMobileWindow(`article?${url}`);
+        this.$root.openMobileWindow(`article?${url}`, title);
       } else {
         this.$root.openMobileWindow(link);
       }

@@ -45,7 +45,7 @@ export default {
   methods: {
     goDetail(article){
       const query = this.$root.encodeObj({id: article.id})
-      this.$root.openMobileWindow(`questionaireDetail?${query}`)
+      this.$root.openMobileWindow(`questionaireDetail?${query}`, article.title)
     }
   }
 }

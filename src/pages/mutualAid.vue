@@ -17,6 +17,11 @@
         <article-list-mutual :articles="articles"></article-list-mutual>
       </div>
     </mt-loadmore>
+    <div class="writing-button">
+      <div class="round-button" style="position: relative;z-index: 1;">
+        <img :src="require('@/assets/image/edit_n.png')" @click="$root.openMobileWindow('addingAidInfo', '新增生活互助文章')">
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -100,5 +105,16 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-
+.writing-button{
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+}
+.round-button{
+  &>img{
+    display: block;
+    width: 53px;
+    height: 53px;
+  }
+}
 </style>

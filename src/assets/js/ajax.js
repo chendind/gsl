@@ -1,32 +1,32 @@
 import router from 'vue-router'
+import { rootVue } from '@/main.js'
 import $ from 'jquery'
-$.ajaxSetup({
-  type: 'post',
-  success(data){
-    if (data.state === 10000) {
-
-    }
-  }
-});
 const sendAjax = (url, payload, params = {}) => {
   const query = $.param(payload || '')
   if (navigator.onLine) {
     return new Promise((resolve, reject) => {
       $.ajax({
-        ...params,
+        type: 'post',
         url,
         data: {
           ...payload,
         },
         success(data){
-          if(data.state == 0 || data.state === undefined){
+          if (data.state == 10000 && localStorage.getItem('userType') === 'user') {
+            const query = rootVue.encodeObj({
+              url: location.href
+            });
+            rootVue.replaceMobileWindow(`login?${query}`);
+          }
+          if (data.state == 0 || data.state === undefined) {
             localStorage.setItem(`${url}?${query}`, JSON.stringify(data));
           }
           resolve(data);
         },
         error(data){
           reject(data);
-        }
+        },
+        ...params,
       })
     })
   } else {
@@ -35,7 +35,6 @@ const sendAjax = (url, payload, params = {}) => {
   }
 }
 export const getUserData = (open_id) => {
-  console.log(open_id)
   return sendAjax('/home/index/userdata', {open_id});
 }
 export const getSubscription = (user_id) => {
@@ -95,11 +94,14 @@ export const getVoteArticle = (page, tag_id, portal_id) => {
   return new Promise((resolve, reject) => {
     getTagArticle(page, tag_id, portal_id).then(data => {
       let index = 0;
+      if (data.order.length == 0) {
+        resolve(data);
+        return;
+      }
       for(let i = 0, length = data.order.length; i < length; i++){
         getArticleVoteCount(data.order[i].id).then(data2=>{
           data.order[i].voteCount=data2.order.count;
           index ++;
-          console.log(data.order);
           if (index === length) {
             resolve(data);
           }
@@ -107,7 +109,6 @@ export const getVoteArticle = (page, tag_id, portal_id) => {
       }
     });
   });
-
 }
 export const getArticleVoteCount = (articleId) => {
   return sendAjax('/home/article/ArticleVoteCount', { id: articleId });
@@ -177,8 +178,11 @@ export const sendComment = (id, text) => {
 export const likeComment = (id, key) => {
   return sendAjax('/home/mutual/commentLike', { id, key });
 }
-
-
-
+export const sendReceipt = (id, answer) => {
+  return sendAjax('/home/show/ReceiptAnswer', { id, answer });
+}
+export const mutualPublish = (portal_id, title, text, photo) => {
+  return sendAjax('/home/mutual/mutualPublish', { portal_id, title, text, photo });
+}
 
 

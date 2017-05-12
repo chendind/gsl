@@ -69,7 +69,7 @@ export default {
   mounted() {
     this.onPullupLoading();
     Bridge.customGoBack(function(){
-        Bridge.closeMobileWindow();
+      Bridge.closeMobileWindow("1");
     },'');
   },
   updated() {
