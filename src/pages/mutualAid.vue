@@ -19,7 +19,7 @@
     </mt-loadmore>
     <div class="writing-button">
       <div class="round-button" style="position: relative;z-index: 1;">
-        <img :src="require('@/assets/image/edit_n.png')" @click="$root.openMobileWindow('addingAidInfo', '新增生活互助文章')">
+        <img :src="require('@/assets/image/edit_n.png')" @click="addingAidInfo">
       </div>
     </div>
   </div>
@@ -80,13 +80,13 @@ export default {
             ...this.$data.articles,
             ...data.order,
           ];
-          this.$refs.loadmore.onBottomLoaded();
         }else{
           this.$data.allLoaded = true;
         }
         if(pendingLength < 10) {
           this.$data.allLoaded = true;
         }
+        this.$refs.loadmore.onBottomLoaded();
         this.$root.disabledLink = false;
       })
     },
@@ -95,6 +95,13 @@ export default {
       //   tagId: themeTag.id
       // });
       // this.$root.openMobileWindow(`tagArticle?${query}`, themeTag.name);
+    },
+    addingAidInfo(){
+      this.$root.openMobileWindow('addingAidInfo', '新增生活互助文章', () => {
+        // this.loadTop();
+        console.log('reload')
+        window.location.reload();
+      })
     }
   },
   mounted() {

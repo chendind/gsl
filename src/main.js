@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import FastClick from 'fastclick'
 import MintUI from 'mint-ui'
+import VuePreview from 'vue-preview'
 import 'mint-ui/lib/style.css'
 import App from './App'
 import router from './router'
@@ -11,11 +12,13 @@ import '@/assets/js/public.js'
 import '@/assets/js/vconsole.min.js'
 import '@/assets/less/public.less'
 
+
 // FastClick.attach(document.body)
 
 Vue.use(AlertPlugin)
 Vue.use(MintUI)
-
+Vue.use(VuePreview)
+window.router = router;
 Vue.config.productionTip = false
 
 Vue.filter('time', (value) => {
@@ -71,12 +74,13 @@ export const rootVue = new Vue({
           fullpath = `${location.origin+location.pathname}#/${url}`;
         }
         if (this.isApp) {
-          console.log(name || url2name[url] || "")
+          // console.log(name || url2name[url] || "")
           Bridge.openMobileWindow(fullpath, name || url2name[url] || "", (result) => {
             callback&&callback(result);
           });
         } else {
           location.href = fullpath;
+          // router.push(url)
         }
       }
     },
@@ -110,7 +114,11 @@ export const rootVue = new Vue({
           }
       }
       return parseURI;
+      // return JSON.parse(decodeURIComponent(this.$route.query.query));
     },
+    getUploadedImages(images){
+      return getUploadedImages(images);
+    }
   },
   render: h => h(App),
 }).$mount('#app-box')
@@ -142,8 +150,42 @@ function getFormatTime(value) {
     y, m, d, h, i, s
   };
 }
-
-
+// 输入图片对象 { src, title }
+// 输出 { src, title, w, h }
+function imageOnloadCallback(item){
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      let imageWidth = image.width;
+      let imageHeight = image.height;
+      if (imageWidth < window.innerWidth) {
+        imageHeight = Math.round(imageHeight * window.innerWidth / imageWidth)
+        imageWidth = window.innerWidth;
+      }
+      resolve({
+        src: item.src,
+        title: item.title,
+        w: imageWidth,
+        h: imageHeight,
+      });
+      image.onload = null
+    }
+    image.src = item.src;
+  })
+}
+// 输入图片对象数组 [ { src, title } ... ]
+// 输出图片对象数组 [ { src, title, w, h} ]
+function getUploadedImages(images) {
+  return new Promise((resolve, reject) => {
+    const promiseList = [];
+    images.forEach(image => {
+      promiseList.push(imageOnloadCallback(image))
+    });
+    Promise.all(promiseList).then(data => {
+      resolve(data)
+    })
+  })
+}
 
 
 

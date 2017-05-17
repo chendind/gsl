@@ -17,24 +17,38 @@ const sendAjax = (url, payload, params = {}) => {
               url: location.href
             });
             rootVue.replaceMobileWindow(`login?${query}`);
-          }
-          if (data.state == 0 || data.state === undefined) {
+          } else if (data.state == 0 || data.state === undefined) {
             localStorage.setItem(`${url}?${query}`, JSON.stringify(data));
+          } else if (data.detail && data.state != 10000) {
+            console.log(data.detail && data.state != 10000)
+            rootVue.$vux.alert.show({
+              title: '提示',
+              content: data.detail,
+              onShow () {},
+              onHide () {}
+            });
           }
           resolve(data);
         },
         error(data){
-          reject(data);
+          reject();
         },
         ...params,
       })
     })
   } else {
     const cache = localStorage.getItem(`${url}?${query}`);
-    return $.Deferred().resolve(JSON.parse(cache));
+    return new Promise((resolve, reject) => {
+      if (cache) {
+        resolve(JSON.parse(cache));
+      } else {
+        reject();
+      }
+    });
   }
 }
 export const getUserData = (open_id) => {
+  console.log(open_id)
   return sendAjax('/home/index/userdata', {open_id});
 }
 export const getSubscription = (user_id) => {
@@ -180,6 +194,9 @@ export const likeComment = (id, key) => {
 }
 export const sendReceipt = (id, answer) => {
   return sendAjax('/home/show/ReceiptAnswer', { id, answer });
+}
+export const getArticleReceiptInfo = (id) => {
+  return sendAjax('/home/article/ArticleReceiptInfo', { id });
 }
 export const mutualPublish = (portal_id, title, text, photo) => {
   return sendAjax('/home/mutual/mutualPublish', { portal_id, title, text, photo });

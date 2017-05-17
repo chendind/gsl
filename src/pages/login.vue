@@ -35,12 +35,15 @@ export default {
       Bridge.tryLogin((data) => {
         console.log(`Bridge登陆：${JSON.stringify(data)}`)
         if (!data) {
-          // data = {};
-          // data.openid = "c92d6478259631360f0578e0647aac92";
-          this.touristLogin();
-          return;
+          if(this.$root.isApp){
+            this.touristLogin();
+            return;
+          } else {
+            data = {};
+            data.openid = "c92d6478259631360f0578e0647aac92";
+          }
         }
-        getUserData(data.openId).then((data1) => {
+        getUserData(data.openid).then((data1) => {
           if (data1.state == 0) {
             localStorage.setItem('userId', data1.order);
             getPortalLists().then((data2) => {

@@ -11,9 +11,10 @@
           {{article.text}}
         </div>
         <flexbox wrap="wrap" :gutter="0">
-          <flexbox-item :span="4" v-for="(photo, $index) in article.photo" :key="$index">
+          <flexbox-item :span="4" v-for="(image, $index) in uploadedImages" :key="$index" class="preview-img" @click.native="previewImage($index)">
             <div class="three-img-box">
-              <img :src="photo">
+              <div class="inner-box bg-center" :style="{'background-image': `url(${image.src})`}">
+              </div>
             </div>
           </flexbox-item>
         </flexbox>
@@ -83,7 +84,7 @@
       <box gap="10px 10px">
         <flexbox>
           <flexbox-item>
-            <x-button action-type="button">取消</x-button>
+            <x-button action-type="button" @click.native="commentShow = false">取消</x-button>
           </flexbox-item>
           <flexbox-item>
             <x-button type="primary" action-type="button" @click.native="sendComment">确定</x-button>
@@ -91,15 +92,16 @@
         </flexbox>
       </box>
     </popup>
+    <previewer :list="uploadedImages" ref="previewer" :options="previewerOption"></previewer>
   </div>
 </template>
 <script>
 import { getMutualInfo, getCommentList, sendComment, likeComment, likeMutual } from '@/assets/js/ajax.js'
-import { Card, Grid, GridItem, Popup, Group, XTextarea, Flexbox, FlexboxItem, XButton, Box } from 'vux'
+import { Card, Grid, GridItem, Popup, Group, XTextarea, Flexbox, FlexboxItem, XButton, Box, Previewer } from 'vux'
 export default {
   name: 'mutualAidInfo',
   components: {
-    Grid, GridItem, Popup, Group, XTextarea, Flexbox, FlexboxItem, XButton, Box
+    Grid, GridItem, Popup, Group, XTextarea, Flexbox, FlexboxItem, XButton, Box, Previewer
   },
   data() {
     return {
@@ -110,6 +112,18 @@ export default {
       commentShow: false,
       commentText: '',
       allLoad: false,
+      uploadedImages: [],
+      previewerOption: {
+        fullscreenEl: false,
+        shareEl: false,
+        counterEl: true,
+        arrowEl: true,
+        spacing: 0,
+        pinchToClose: true,
+        history:false,
+        galleryPIDs:false,
+        loop: false,
+      }
     }
   },
   methods: {
@@ -217,6 +231,45 @@ export default {
         this.$data.commentShow = false;
       })
     },
+    previewImage(index){
+      this.$refs.previewer.show(index);
+    },
+    getPhotos(photo_ids){
+      const promiseList = [];
+      photo_ids.forEach((item) => {
+        let photo_id = item;
+        // 对于当时直接存为完整url的情况，取出其中的图片ID值
+        if ((/cloudstore\/(\w+)?\?/).test(photo_id)){
+          photo_id = item.match(/cloudstore\/(\w+)?\?/)[1]
+        }
+        promiseList.push(this.getCloudFileUrl(photo_id));
+      })
+      Promise.all(promiseList).then((data) => {
+        if (data.length) {
+          const uploadedImages = data.map((item) => {
+            return {
+              src: item.result
+            }
+          });
+          this.$root.getUploadedImages(uploadedImages).then(data => {
+            this.$data.uploadedImages = data;
+          });
+        }
+      });
+    },
+    getCloudFileUrl(photo_id){
+      return new Promise((resolve) => {
+        if (this.$root.isApp) {
+          Bridge.getCloudFileUrl(photo_id,null,function(s){
+            resolve(s);
+          });
+        } else {
+          resolve({
+            result: 'http://yzz-server.780.cn/file/f36283bb88f6faeec92245ea87cf160e/cloudstore/5d10557c4b3b6c1f37aa7a0611ef64a9?GUID=52986787a28e906053c801c0e227a2cd&MD5=1300caa4e8c33c9d21699c6ba558c857'
+          })
+        }
+      })
+    },
   },
   mounted() {
     const query = this.$root.getQueryData();
@@ -224,6 +277,7 @@ export default {
     getMutualInfo(this.$data.id).then((data) => {
       if (data.state == 0) {
         this.$data.article = data.order;
+        this.getPhotos(data.order.photo);
         window.shareData={
           title: this.$data.article.title,
           text: this.$data.article.text,
@@ -277,6 +331,20 @@ export default {
 }
 .three-img-box{
   padding: 5px;
+  >.inner-box{
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    height: 0;
+     >.image{
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+      width: 100%;
+      opacity: 0;
+    }
+  }
 }
 </style>
 

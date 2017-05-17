@@ -27,7 +27,7 @@
 <script>
 import { Tab, TabItem, Cell } from 'vux'
 import { Loadmore } from 'mint-ui';
-import { getArticleVoteInfo } from '@/assets/js/ajax.js'
+import { getArticleVoteInfo, getArticleReceiptInfo } from '@/assets/js/ajax.js'
 export default {
   name: 'joinerList',
   components: {
@@ -37,6 +37,7 @@ export default {
   data() {
     return {
       articleId: 0,
+      type: 'vote',
       voteInfo:[],
       allLoaded:false,
       displayText:"没有更多数据了",
@@ -45,7 +46,13 @@ export default {
   },
   methods: {
     loadTop(){
-      getArticleVoteInfo(this.$data.articleId).then((data) => {
+      let loadmoreFn;
+      if (this.$data.type =='vote') {
+        loadmoreFn = getArticleVoteInfo
+      } else {
+        loadmoreFn = getArticleReceiptInfo
+      }
+      loadmoreFn(this.$data.articleId).then((data) => {
         if(data.state == 0){
           this.$data.voteInfo = data.order.read;
           this.$refs.loadmore.onTopLoaded();
@@ -58,6 +65,7 @@ export default {
   },
   created(){
     this.$data.articleId = this.$root.getQueryData().id;
+    this.$data.type = this.$root.getQueryData().type;
   },
   mounted() {
     this.loadTop();

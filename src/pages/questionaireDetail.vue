@@ -8,6 +8,7 @@
           bottomPullText="上拉填写问卷"
           bottomDropText="释放进行问卷填写"
           bottomLoadingText=""
+          :bottom-all-loaded="allLoaded"
           ref="loadmore"
         >
           <div style="min-height: 100vh">
@@ -39,7 +40,8 @@
             </cell>
           </div>
         </mt-loadmore>
-        <x-button class="receipt-button" type="primary" v-if="detail.receipt_title !== undefined" @click.native="receiptButtonClick">我要报名</x-button>
+        <x-button class="receipt-button" type="primary" v-if="type == 'receipt' && !detail.isreceipt" @click.native="receiptButtonClick">我要报名</x-button>
+        <x-button class="receipt-button" type="disabled" v-if="type == 'receipt' && detail.isreceipt">您已报名</x-button>
       </div>
     </transition>
     <transition name="page2">
@@ -73,7 +75,7 @@
 <script>
 import { XImg, Grid, GridItem, Tab, TabItem, Cell, Group, XButton} from 'vux'
 import { Loadmore } from 'mint-ui';
-import { getArticle, getArticleVoteInfo, getVoteInfo, pushAnswers } from '@/assets/js/ajax.js'
+import { getArticle, getArticleVoteInfo, getVoteInfo, pushAnswers, getArticleReceiptInfo } from '@/assets/js/ajax.js'
 import questionaireChecklist from '@/components/questionaireChecklist.vue'
 import $ from 'jquery'
 export default {
@@ -94,18 +96,23 @@ export default {
       isQuestionaireShown: false,
       hasText: false,
       userType: localStorage.getItem('userType'),
+      isvote: false,
+      isreceipt: false,
+      type: 'vote',
+      allLoaded: false,
     }
   },
   methods: {
     goJoinerList(){
       const query = this.$root.encodeObj({
         id: this.$data.articleId,
+        type: this.$data.type
       });
       this.$root.openMobileWindow(`joinerList?${query}`)
     },
     refresh(){
       const articleId = this.$data.articleId;
-      //获取问卷介绍
+      //获取介绍
       getArticle(articleId).then((data) => {
         this.$data.detail = data[0];
         window.shareData={
@@ -113,20 +120,34 @@ export default {
           desc: $(this.$data.detail.text).text(),
         };
         this.$data.hasText = !!$.trim($(data[0].text).text());
-      });
-      //获取报名用户信息
-      getArticleVoteInfo(articleId).then((data) => {
-        if(data.state == 0){
-          this.$data.voteInfo = data.order.read;
+        // 问卷
+        if (this.$data.detail.vote_id){
+          this.$data.type = 'vote';
+          //获取报名用户信息
+          getArticleVoteInfo(articleId).then((data) => {
+            if(data.state == 0){
+              this.$data.voteInfo = data.order.read;
+            }
+          });
+          //获取问卷
+          getVoteInfo(articleId).then((data) => {
+            if(data.state == 0){
+              var temp = [];
+              this.$data.questionaire = data.order[0];
+            }
+          });
+        } else if (this.$data.detail.receipt) {
+          // 回执或问卷仅能存在一个
+          this.$data.allLoaded = true;
+          this.$data.type = 'receipt';
+          getArticleReceiptInfo(articleId).then((data) => {
+            if(data.state == 0){
+              this.$data.voteInfo = data.order.read;
+            }
+          })
         }
       });
-      //获取问卷
-      getVoteInfo(articleId).then((data) => {
-        if(data.state == 0){
-          var temp = [];
-          this.$data.questionaire = data.order[0];
-        }
-      });
+
     },
     loadBottom(){
       this.$data.isQuestionaireShown=true;

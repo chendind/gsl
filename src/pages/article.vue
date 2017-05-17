@@ -16,7 +16,7 @@
               <span class="mh5">阅读数：{{read_count}}</span>
             </div>
           </div>
-          <div class="paragraph" v-html="text"></div>
+          <div class="paragraph" v-html="text" style="overflow-x: hidden;"></div>
           <div>
             <div v-for="file in files">
               附件<a class="file-link" @click="openFileLink(file)">{{file.name}}</a>
@@ -25,8 +25,9 @@
         </div>
       </div>
     </div>
-    <div v-if="fn === 2" class="full-page-box bg-black color-white">
-      <swiper :show-dots="false" height="100vh">
+    <div v-if="fn === 2" class="full-page-box bg-black color-white" style="z-index: 0;">
+      <previewer :list="photo_photo" ref="previewer1" :options="previewerOption1"></previewer>
+      <!-- <swiper :show-dots="false" height="100vh">
         <swiper-item class="swiper-item-box" v-for="(photo, $index) in photo_photo" :key="$index">
           <div class="text-center pd15">{{$index+1}}/{{photo_photo.length}}</div>
           <div class="image-box">
@@ -34,7 +35,16 @@
           </div>
           <div class="bottom-text-box pd10">{{photo.text}}</div>
         </swiper-item>
-      </swiper>
+      </swiper> -->
+      <!-- <mt-swipe :show-indicators="false" :auto="0">
+        <mt-swipe-item class="swiper-item-box" v-for="(photo, $index) in photo_photo" :key="$index">
+          <div class="text-center pd15">{{$index+1}}/{{photo_photo.length}}</div>
+          <div class="image-box">
+            <img :src="photo.photo">
+          </div>
+          <div class="bottom-text-box pd10">{{photo.text}}</div>
+        </mt-swipe-item>
+      </mt-swipe> -->
     </div>
     <div v-if="fn === 4">
       <div class="iframe-box" v-html="iframe"></div>
@@ -54,7 +64,7 @@
         </grid-item>
       </grid>
     </div>
-    <div class="writing-button">
+    <div class="writing-button" style="z-index: 1;">
       <div class="round-button" style="position: relative;z-index: 1;">
         <img :src="require('@/assets/image/edit_n.png')" v-show="!isShowSubButton" @click="showSubButton">
         <img :src="require('@/assets/image/cancel.png')" v-show="isShowSubButton" @click="hideSubButton">
@@ -68,16 +78,18 @@
         </div>
       </div>
     </div>
+    <previewer :list="images" ref="previewer2" :options="previewerOption2"></previewer>
   </div>
 </template>
 <script>
 import { getArticle, toggleDianzan, toggleShoucang } from '@/assets/js/ajax.js'
-import { Scroller, Swiper, SwiperItem, Grid, GridItem } from 'vux'
+import { Scroller, Grid, GridItem, Previewer } from 'vux'
 import $ from 'jquery'
 export default {
   name: '',
   components: {
-    Scroller, Swiper, SwiperItem, Grid, GridItem
+    Scroller, Grid, GridItem,
+    Previewer
   },
   methods: {
     toggleDianzan(){
@@ -106,8 +118,8 @@ export default {
       const aDom = $('.paragraph').find('.list-paddingleft-2').find('a');
       $.each(aDom, (index, dom) => {
         this.$data.files.push({
-          url: $(dom).attr('href'),
-          name: $(dom).text()
+          url: dom.href,
+          name: dom.innerText
         });
       });
     },
@@ -122,6 +134,28 @@ export default {
             window.open(dom.href)
           }
         })
+      });
+    },
+    getAllImages(text){
+      const imageDom = $('.paragraph').find('img');
+      let loadedLength = 0;
+      const photos = [];
+      $.each(imageDom, (index, dom) => {
+        photos.push({
+          src: dom.src
+        });
+      });
+      this.$root.getUploadedImages(photos).then(data => {
+        this.$data.images = data;
+        imageDom.addClass('preview-img').on('click', (e)=>{
+          const index = imageDom.index($(e.target));
+          this.$refs.previewer2.show(index);
+        });
+      })
+    },
+    imageBindEvent(index, dom){
+      $(dom).addClass('preview-img').on('click', ()=>{
+        this.$refs.previewer2.show(index);
       });
     },
     openFileLink(file){
@@ -149,16 +183,65 @@ export default {
       isShowSubButton: false,
       fn: 0,
       photo_photo: [],
+      previewerOption1: {
+        closeEl: false,
+        fullscreenEl: false,
+        shareEl: false,
+        counterEl: true,
+        arrowEl: true,
+        spacing: 0,
+        history:false,
+        galleryPIDs:false,
+        loop: false,
+        showHideOpacity: true,
+        hideAnimationDuration:0,
+        showAnimationDuration:0,
+        tapToClose: false,
+        pinchToClose: false,
+        closeOnScroll: false,
+        closeOnVerticalDrag: false,
+        clickToCloseNonZoomable: false,
+        // Function builds caption markup
+        addCaptionHTMLFn: function(item, captionEl, isFake) {
+            // item      - slide object
+            // captionEl - caption DOM element
+            // isFake    - true when content is added to fake caption container
+            //             (used to get size of next or previous caption)
+            if(!item.title) {
+                captionEl.children[0].innerHTML = '';
+                return false;
+            }
+            captionEl.children[0].innerHTML = `<div style="min-height: 20vh;background-color: rgba(0,0,0,0.5);">${item.title}</div>`;
+            return true;
+        },
+        getThumbBoundsFn() {
+          return {x: 0, y: 0, w: 0}
+        }
+      },
+      previewerOption2: {
+        fullscreenEl: false,
+        shareEl: false,
+        counterEl: true,
+        arrowEl: true,
+        spacing: 0,
+        pinchToClose: true,
+        history:false,
+        galleryPIDs:false,
+        loop: false,
+        showHideOpacity: true,
+      },
       iframe: '',
-      files: []
+      files: [], // 附件数组
+      images: [], // 图片数组
     }
   },
-  created() {
+  mounted() {
     const params = this.$root.getQueryData();
     this.$data.article_id = params.id;
+    // debugger;
     getArticle(this.$data.article_id).then((data) => {
-      // 如果是投票，跳转至投票页面
-      if (data[0].vote_id) {
+      // 如果是投票或回执，跳转至投票页面
+      if (data[0].vote_id || data[0].isreceipt) {
         const query = this.$root.encodeObj({id: this.$data.article_id});
         this.$root.replaceMobileWindow(`questionaireDetail?${query}`);
       }
@@ -166,14 +249,25 @@ export default {
       this.$data.author = data[0].author;
       this.$data.in_time = data[0].in_time;
       this.$data.like_count = data[0].like_count;
-      this.$data.read_count = data[0].read_count;
+      this.$data.read_count = data[0].read_count || 0;
       this.$data.measure_count = data[0].measure_count;
       this.$data.text = data[0].text;
       this.$data.theme = data[0].theme;
       this.$data.title = data[0].title;
       this.$data.fn = data[0].function;
       if (this.$data.fn === 2) {
-        this.$data.photo_photo = data.photo_photo;
+        const photos = data.photo_photo.map((item) => {
+          return {
+            src: item.photo,
+            title: item.text
+          }
+        });
+        this.$root.getUploadedImages(photos).then(data => {
+          this.$data.photo_photo = data;
+          this.$nextTick(() => {
+            this.$refs.previewer1.show(0);
+          });
+        });
       } else if (this.$data.fn === 4) {
         if (data[0].text.match(/<iframe.*><\/iframe>/)) {
           let iframe = data[0].text.match(/<iframe.*><\/iframe>/)[0];
@@ -190,6 +284,7 @@ export default {
       this.$nextTick(() => {
         this.getDownloadFile(data[0].text);
         this.bindOtherLinkEvent(data[0].text);
+        this.getAllImages(data[0].text);
       });
       window.shareData={
         title: this.$data.title,
@@ -199,6 +294,12 @@ export default {
     Bridge.supportShare(true);
   },
   updated() {
+  },
+  beforeRouteLeave (to, from, next) {
+    if(this.$preview.isShow){
+      this.$preview.close();
+    }
+    next()
   }
 }
 </script>
@@ -238,7 +339,7 @@ export default {
   transition: all 500ms ease;
 }
 .swiper-item-box{
-  position: relative;
+  /*position: relative;*/
   .image-box{
     position: absolute;
     top: 45%;

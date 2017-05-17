@@ -28,31 +28,35 @@ export default {
   data() {
     return {
       uploadedImages: [],
+      photo_ids: [],
       title: '',
       text: '',
     }
   },
   methods: {
     pickPhoto(){
+      if (!this.$root.isApp) {
+        this.$vux.alert.show({
+          title: '提示',
+          content: '请在APP端上传图片',
+        });
+        return ;
+      }
       let number = 0;
-      this.uploadPhoto().then((promiseList) => {
+      this.uploadPhoto().then((photo_ids) => {
+        this.$data.photo_ids = photo_ids;
+        const promiseList = [];
+        photo_ids.forEach((photo_id) => {
+          promiseList.push(this.getCloudFileUrl(photo_id));
+        });
         Promise.all(promiseList).then((data) => {
           const uploadedImages = data.map((item) => {
             return item.result;
           });
-          // if (this.$data.uploadedImages.length + uploadedImages.length > 9) {
-          //   this.$vux.alert.show({
-          //     title: '提示',
-          //     content: '最多选取9张图片',
-          //     onShow () {},
-          //     onHide () {}
-          //   });
-          // } else {
-            this.$data.uploadedImages = [
-              ...this.$data.uploadedImages,
-              ...uploadedImages,
-            ];
-          // }
+          this.$data.uploadedImages = [
+            ...this.$data.uploadedImages,
+            ...uploadedImages,
+          ];
         })
       })
     },
@@ -60,27 +64,25 @@ export default {
       return new Promise((resolve, reject) => {
         Bridge.uploadPhoto (9, (result) => {
           if (result.result != 1) return;
-          const promiseList = [];
-          const number = result.images.length;
-          result.images.forEach((image) => {
-            const p = new Promise((resolve2, reject2) => {
-              Bridge.getCloudFileUrl(image.image,null,function(s){
-                resolve2(s);
-              });
-            });
-            promiseList.push(p);
-            if (number === promiseList.length){
-              resolve(promiseList);
-            }
-          })
+          const photo_ids = result.images.map((item) => {
+            return item.image
+          });
+          resolve(photo_ids)
         });
       });
+    },
+    getCloudFileUrl(photo_id){
+      return new Promise((resolve) => {
+        Bridge.getCloudFileUrl(photo_id,null,function(s){
+          resolve(s);
+        });
+      })
     },
     submit(){
       const portalId = localStorage.getItem('portalId');
       const title = this.$data.title;
       const text = this.$data.text;
-      const photo = this.$data.uploadedImages;
+      const photo = this.$data.photo_ids;
       if (title === '') {
         this.$vux.alert.show({
           title: '提示',
@@ -99,7 +101,7 @@ export default {
               content: '提交成功',
               onShow () {},
               onHide () {
-                Bridge.closeMobileWindow();
+                Bridge.closeMobileWindow("1");
               }
             });
           } else {
@@ -116,6 +118,9 @@ export default {
       onShow () {},
       onHide () {}
     });
+    Bridge.customGoBack(()=>{
+      Bridge.closeMobileWindow("1");
+    },'');
   },
   updated() {
   }
