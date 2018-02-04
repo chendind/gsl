@@ -48,7 +48,10 @@ export default {
         if (data.state == 0) {
           this.$vux.alert.show({
             title: '提示',
-            content: '提交成功！'
+            content: '提交成功！',
+            onHide(){
+              Bridge.closeMobileWindow();
+            }
           });
         }
       })
